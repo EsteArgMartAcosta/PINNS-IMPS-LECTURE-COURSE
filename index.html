@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07111f" />
+  <title>SciML Atlas — PINNs to NeuSA</title>
+  <meta name="description" content="Interactive research atlas for four weeks of SciML: PINNs, causality, spectral bias, adaptive sampling, absorbing boundaries, Neural ODEs and NeuSA." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <div class="aurora aurora-a"></div>
+  <div class="aurora aurora-b"></div>
+  <div class="noise"></div>
+
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#home" aria-label="SciML Atlas home">
+      <span class="brand-mark">∇</span>
+      <span class="brand-copy"><strong>SciML Atlas</strong><small>PINNs → NeuSA</small></span>
+    </a>
+    <nav class="nav" aria-label="Primary navigation">
+      <a href="#theory" data-nav="theory">Theory map</a>
+      <a href="#experiments" data-nav="experiments">Experiments</a>
+      <a href="#results" data-nav="results">Results</a>
+      <a href="#journey" data-nav="journey">Journey</a>
+    </nav>
+    <div class="top-actions">
+      <button class="ghost-btn" id="lang-toggle" title="Toggle language">ES</button>
+      <button class="stage-btn" id="stage-toggle"><span>●</span> Present</button>
+    </div>
+  </header>
+
+  <div class="scroll-progress"><span id="scroll-progress-fill"></span></div>
+
+  <main>
+    <section class="hero section" id="home" data-stage="0">
+      <div class="hero-grid">
+        <div class="hero-copy reveal">
+          <div class="eyebrow">IMPA · Scientific Machine Learning</div>
+          <h1><span class="muted-line">Four weeks.</span><br/>One mental model.</h1>
+          <p class="hero-lede" data-i18n="hero.lede">
+            An interactive research atlas connecting the mathematics, code, experiments, and failure modes behind PINNs, causality, wave boundaries, Neural ODEs, and NeuSA.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-btn" href="#theory">Enter the map <span>↘</span></a>
+            <button class="secondary-btn" id="hero-present">Start presentation mode</button>
+          </div>
+          <div class="hero-meta">
+            <div><span class="meta-kicker">W01</span><strong>PINNs</strong></div>
+            <div><span class="meta-kicker">W02</span><strong>Causality</strong></div>
+            <div><span class="meta-kicker">W03</span><strong>Wave PINNs</strong></div>
+            <div><span class="meta-kicker">W04</span><strong>NeuSA</strong></div>
+          </div>
+        </div>
+
+        <div class="hero-orbit reveal delay-1" aria-label="Four-week conceptual orbit">
+          <div class="orbit-core">
+            <span class="orbit-kicker">CENTRAL QUESTION</span>
+            <strong>Where should physics live?</strong>
+            <small>loss · representation · sampling · boundaries · dynamics</small>
+          </div>
+          <div class="orbit-ring ring-1"></div>
+          <div class="orbit-ring ring-2"></div>
+          <div class="orbit-node node-a"><span>01</span>Loss</div>
+          <div class="orbit-node node-b"><span>02</span>Time</div>
+          <div class="orbit-node node-c"><span>03</span>Space</div>
+          <div class="orbit-node node-d"><span>04</span>Dynamics</div>
+        </div>
+      </div>
+
+      <div class="hero-bottom reveal delay-2">
+        <div class="statement">
+          <span class="statement-index">THESIS</span>
+          <p data-i18n="hero.thesis">Physics is not only a term in the loss. It can also enter through how we represent, sample, constrain, and evolve the solution.</p>
+        </div>
+        <div class="hero-hint">Scroll to explore <span>↓</span></div>
+      </div>
+    </section>
+
+    <section class="section theory-section" id="theory" data-stage="1">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">01 · THEORY AS A CONNECTED SYSTEM</div>
+          <h2>Interactive concept map</h2>
+        </div>
+        <p data-i18n="theory.sub">Click a node to move from intuition to mathematics, evidence, and limitations. Drag nodes. Scroll to zoom. Drag the empty canvas to pan.</p>
+      </div>
+
+      <div class="theory-toolbar reveal">
+        <div class="week-filters" id="week-filters">
+          <button class="filter-chip active" data-week="all">All</button>
+          <button class="filter-chip" data-week="1">W1 · Foundations</button>
+          <button class="filter-chip" data-week="2">W2 · Causality</button>
+          <button class="filter-chip" data-week="3">W3 · Wave PINNs</button>
+          <button class="filter-chip" data-week="4">W4 · NeuSA</button>
+        </div>
+        <label class="search-wrap">
+          <span>⌕</span>
+          <input id="concept-search" placeholder="Search concepts…" autocomplete="off" />
+        </label>
+        <div class="map-controls">
+          <button id="map-minus" aria-label="Zoom out">−</button>
+          <button id="map-reset" aria-label="Reset map">◎</button>
+          <button id="map-plus" aria-label="Zoom in">+</button>
+        </div>
+      </div>
+
+      <div class="theory-workspace reveal delay-1">
+        <div class="map-shell" id="map-shell">
+          <svg id="concept-map" viewBox="0 0 1200 700" role="img" aria-label="Interactive SciML concept map">
+            <defs>
+              <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="rgba(164,191,222,.55)"/></marker>
+            </defs>
+            <g id="map-transform">
+              <g id="map-edges"></g>
+              <g id="map-nodes"></g>
+            </g>
+          </svg>
+          <div class="map-legend">
+            <span><i class="dot w1"></i>W1</span><span><i class="dot w2"></i>W2</span><span><i class="dot w3"></i>W3</span><span><i class="dot w4"></i>W4</span>
+            <span class="legend-note">connection = conceptual dependency</span>
+          </div>
+        </div>
+
+        <aside class="concept-panel" id="concept-panel">
+          <div class="panel-empty" id="panel-empty">
+            <div class="panel-symbol">↗</div>
+            <h3>Select a concept</h3>
+            <p>The map is your live blackboard. Every node has intuition, mathematics, why it matters, and what can fail.</p>
+          </div>
+          <div class="panel-content hidden" id="panel-content">
+            <div class="panel-topline"><span id="panel-week"></span><button id="panel-close">×</button></div>
+            <div class="panel-eyebrow" id="panel-eyebrow"></div>
+            <h3 id="panel-title"></h3>
+            <div class="panel-tabs">
+              <button class="panel-tab active" data-tab="intuition">Intuition</button>
+              <button class="panel-tab" data-tab="math">Math</button>
+              <button class="panel-tab" data-tab="why">Why it matters</button>
+              <button class="panel-tab" data-tab="limits">Failure mode</button>
+            </div>
+            <div class="panel-body" id="panel-body"></div>
+            <div class="panel-tags" id="panel-tags"></div>
+            <div class="panel-nav"><button id="concept-prev">← Previous</button><button id="concept-next">Next →</button></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="storyline reveal">
+        <div class="storyline-head"><span>GUIDED PATH</span><strong>Explain the first four weeks as one argument</strong></div>
+        <div class="storyline-track" id="storyline-track"></div>
+      </div>
+    </section>
+
+    <section class="section experiments-section" id="experiments" data-stage="2">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">02 · THEORY → CODE → TEST</div>
+          <h2>Experiment architecture</h2>
+        </div>
+        <p>Every claim gets a protocol. Every protocol gets a reference, a metric, a seed, and a failure condition.</p>
+      </div>
+
+      <div class="experiment-grid reveal delay-1">
+        <article class="experiment-card" data-accent="purple">
+          <div class="exp-top"><span class="exp-index">A</span><span class="status proposed">planned</span></div>
+          <h3>Representation × frequency</h3>
+          <p>Does exposing oscillatory coordinates help a PINN as physical frequency increases?</p>
+          <div class="exp-flow"><span>PINN</span><i>→</i><span>FF-PINN</span><i>×</i><span>frequency</span></div>
+          <div class="exp-metrics"><span>field error</span><span>receiver traces</span><span>cost</span></div>
+          <button class="exp-open" data-exp="A">Open protocol ↗</button>
+        </article>
+
+        <article class="experiment-card" data-accent="amber">
+          <div class="exp-top"><span class="exp-index">B</span><span class="status proposed">planned</span></div>
+          <h3>Boundary × adaptive sampling</h3>
+          <p>Does an adaptive training strategy still help when wave-boundary treatment changes?</p>
+          <div class="exp-flow"><span>Higdon-1</span><i>↔</i><span>Higdon-2</span><i>×</i><span>adaptive</span></div>
+          <div class="exp-metrics"><span>reflection proxy</span><span>field error</span><span>sampling cost</span></div>
+          <button class="exp-open" data-exp="B">Open protocol ↗</button>
+        </article>
+
+        <article class="experiment-card" data-accent="green">
+          <div class="exp-top"><span class="exp-index">C</span><span class="status recorded">recorded</span></div>
+          <h3>Structured learned dynamics</h3>
+          <p>Can a smaller, structured correction transfer better than a highly expressive global model?</p>
+          <div class="exp-flow"><span>global</span><i>↔</i><span>local</span><i>↔</i><span>cubic</span></div>
+          <div class="exp-metrics"><span>transfer</span><span>energy</span><span>force</span></div>
+          <button class="exp-open" data-exp="C">Open protocol ↗</button>
+        </article>
+      </div>
+
+      <div class="protocol-drawer" id="protocol-drawer" aria-hidden="true">
+        <div class="protocol-scrim" id="protocol-scrim"></div>
+        <div class="protocol-sheet">
+          <button class="drawer-close" id="protocol-close">×</button>
+          <span class="drawer-kicker" id="drawer-kicker"></span>
+          <h3 id="drawer-title"></h3>
+          <p id="drawer-question"></p>
+          <div class="protocol-columns">
+            <div><span>CONTROL</span><strong id="drawer-control"></strong></div>
+            <div><span>CHANGE</span><strong id="drawer-change"></strong></div>
+            <div><span>READOUT</span><strong id="drawer-readout"></strong></div>
+          </div>
+          <div class="protocol-note" id="drawer-note"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section results-section" id="results" data-stage="3">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">03 · RESULTS AS AN EXPLORABLE OBJECT</div>
+          <h2>Interactive evidence dashboard</h2>
+        </div>
+        <p>Filter the experiment live while you present. Individual seeds stay visible; means never hide the dispersion.</p>
+      </div>
+
+      <div class="results-layout reveal delay-1">
+        <aside class="results-controls glass-card">
+          <div class="control-group">
+            <label>Initial condition</label>
+            <select id="result-case"></select>
+          </div>
+          <div class="control-group">
+            <label>Time interval</label>
+            <div class="segmented" id="interval-buttons"></div>
+          </div>
+          <div class="control-group">
+            <label>Metric</label>
+            <div class="segmented"><button class="active" data-metric="error">Relative L² error</button><button data-metric="energy">Energy drift</button></div>
+          </div>
+          <div class="evidence-note"><span class="status recorded">recorded</span><p id="result-note"></p></div>
+          <div class="result-summary" id="result-summary"></div>
+        </aside>
+
+        <div class="results-viz glass-card">
+          <div class="viz-header"><div><span class="mini-kicker">SEED-LEVEL VIEW</span><h3 id="viz-title">Transfer error</h3></div><div class="legend" id="viz-legend"></div></div>
+          <svg id="result-chart" viewBox="0 0 900 500" role="img" aria-label="Interactive result comparison chart"></svg>
+          <div class="viz-footer"><span>log scale when needed</span><span>hover a point for exact value</span></div>
+        </div>
+      </div>
+
+      <div class="result-callout reveal">
+        <span class="callout-number" id="callout-number">30×</span>
+        <div><strong id="callout-title">A good fit is not the same as transferable dynamics.</strong><p id="callout-copy">On the original pulse, the global model fit the training interval dramatically better, yet the structured local model transferred much better to later times.</p></div>
+      </div>
+    </section>
+
+    <section class="section journey-section" id="journey" data-stage="4">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">04 · WHAT CHANGED IN MY MENTAL MODEL</div>
+          <h2>Four weeks, four shifts</h2>
+        </div>
+        <p>Not a list of papers — a sequence of increasingly structural answers to the same question.</p>
+      </div>
+
+      <div class="journey-line reveal delay-1">
+        <article><span class="journey-week">W1</span><h3>Physics can become a loss.</h3><p>PINNs turn a differential equation into an optimization objective.</p><small>But optimization sees only what representation and sampling expose.</small></article>
+        <article><span class="journey-week">W2</span><h3>Time ordering matters.</h3><p>Causality is not merely data order; it can reshape the training objective.</p><small>Low training residual does not guarantee the right temporal dynamics.</small></article>
+        <article><span class="journey-week">W3</span><h3>The domain is part of the model.</h3><p>Boundaries, frequency representation, and sampling change what problem the network effectively learns.</p><small>Wave problems expose these choices brutally.</small></article>
+        <article><span class="journey-week">W4</span><h3>Physics can become architecture.</h3><p>NeuSA embeds a spectral state and numerical evolution directly into the model.</p><small>Then integration error and transfer become first-class questions.</small></article>
+      </div>
+
+      <div class="manifesto reveal">
+        <div class="manifesto-kicker">CURRENT WORKING PRINCIPLE</div>
+        <blockquote>“Do not ask only whether the neural network can fit the PDE. Ask which piece of classical numerical structure should be built into the learning problem — and which failure mode that choice actually fixes.”</blockquote>
+        <div class="manifesto-tags"><span>representation</span><span>causality</span><span>sampling</span><span>boundaries</span><span>integration</span><span>transfer</span></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="presenter-dock" id="presenter-dock" aria-hidden="true">
+    <button id="present-prev">←</button>
+    <div><span id="present-index">1 / 5</span><strong id="present-title">Opening</strong></div>
+    <button id="present-next">→</button>
+    <button id="present-exit">Exit</button>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+  <script src="./data/concepts.js"></script>
+  <script src="./data/results.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
