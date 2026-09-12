@@ -1059,13 +1059,15 @@ If
 ```math
 \Omega^2
 =
-\operatorname{diag}
-\left(
-\omega_1^2,\ldots,\omega_M^2
-\right),
+\begin{pmatrix}
+\omega_1^2 & 0 & \cdots & 0 \\
+0 & \omega_2^2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \omega_M^2
+\end{pmatrix}.
 ```
 
-spatial differentiation becomes
+Therefore, spatial differentiation becomes a simple operation on the coefficient vector:
 
 ```math
 a
