@@ -487,20 +487,19 @@ A causal training strategy may use
 w_i\mathcal{L}_i.
 ```
 
-A schematic causal weighting has the form
+A schematic causal weighting can be written as
 
 ```math
 w_i
 =
-\exp
-\left(
+\exp\!\left(
 -\varepsilon
-\sum_{k<i}
+\sum_{k=1}^{i-1}
 \mathcal{L}_k
 \right).
 ```
 
-If earlier intervals still have large error, later intervals receive smaller weight.
+If the losses at earlier times are still large, the weight assigned to later time windows becomes smaller.
 
 The optimizer is encouraged to learn the evolution in temporal order.
 
