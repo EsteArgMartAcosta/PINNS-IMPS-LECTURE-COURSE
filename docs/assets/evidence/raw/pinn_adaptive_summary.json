@@ -1,0 +1,60 @@
+{
+  "status": "completed",
+  "scope": "Development-only source-starvation rescue pilot. Do not treat this as a confirmatory architecture comparison.",
+  "rows": [
+    {
+      "run_id": "A01_repo_adaptive",
+      "strategy": "repo_adaptive",
+      "model": "pinn_matched",
+      "frequency": 10.0,
+      "updates": 250,
+      "training_seconds": 32.08790775499074,
+      "seconds_per_optimizer_step": 0.12835163101996294,
+      "peak_cuda_allocated_MiB": 3000.8623046875,
+      "final_loss": 26598.8046875,
+      "final_eq_loss": 7600.767578125,
+      "final_adaptive_eq_loss": 18993.12109375,
+      "relative_l2": 4.349372993723772,
+      "prediction_l2_over_reference_l2": 4.242382829358115,
+      "prediction_maxabs_over_reference_maxabs": 0.35759270634155826,
+      "cosine_similarity_prediction_reference": 0.009548145886835327,
+      "adaptive_source_box_pdf_mass_final": 0.9800523519515991,
+      "adaptive_source_box_enrichment_final": 490.02617597579933,
+      "expected_adaptive_points_source_box_final": 980.0523519515991
+    },
+    {
+      "run_id": "I01_source_importance",
+      "strategy": "source_importance",
+      "model": "pinn_matched",
+      "frequency": 10.0,
+      "updates": 250,
+      "training_seconds": 23.523562454007333,
+      "seconds_per_optimizer_step": 0.09409424981602933,
+      "peak_cuda_allocated_MiB": 262.9404296875,
+      "final_loss": 6070.3447265625,
+      "final_eq_loss": 6070.34375,
+      "final_adaptive_eq_loss": null,
+      "relative_l2": 0.9998540890015989,
+      "prediction_l2_over_reference_l2": 0.0214778790063872,
+      "prediction_maxabs_over_reference_maxabs": 0.0015733502394181438,
+      "cosine_similarity_prediction_reference": 0.008033381595735056
+    },
+    {
+      "run_id": "U00_uniform",
+      "strategy": "standard",
+      "model": "pinn_matched",
+      "frequency": 10.0,
+      "updates": 250,
+      "training_seconds": 22.99831766600255,
+      "seconds_per_optimizer_step": 0.0919932706640102,
+      "peak_cuda_allocated_MiB": 262.9326171875,
+      "final_loss": 5925.29833984375,
+      "final_eq_loss": 5925.29736328125,
+      "final_adaptive_eq_loss": null,
+      "relative_l2": 0.999919132425534,
+      "prediction_l2_over_reference_l2": 0.013658338736492958,
+      "prediction_maxabs_over_reference_maxabs": 0.0015046724257529753,
+      "cosine_similarity_prediction_reference": 0.003011105890026226
+    }
+  ]
+}

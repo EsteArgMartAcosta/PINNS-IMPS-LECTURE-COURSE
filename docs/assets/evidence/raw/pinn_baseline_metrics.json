@@ -1,0 +1,10 @@
+{
+  "status": "completed",
+  "training_seconds_this_process": 4715.304531421993,
+  "completed_global_steps": 30000,
+  "seconds_per_optimizer_step_this_process": 0.1571768177140664,
+  "peak_cuda_allocated_MiB": 1007.89501953125,
+  "peak_cuda_reserved_MiB": 1124.0,
+  "final_lr": 0.00014712268221385715,
+  "resume_note": "For resumed runs, wall-clock timing covers only the resumed process; global_step is restored by Lightning."
+}

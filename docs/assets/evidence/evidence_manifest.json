@@ -1,0 +1,275 @@
+{
+  "status": "compiled_from_uploaded_evidence_archives",
+  "files": [
+    {
+      "path": "assets/evidence/discrepancy_coverage_vs_width.png",
+      "bytes": 130729,
+      "sha256": "1491ce965509bcf74790a9f9cccf965d406c248c6b7f6082c9534630d8e38aa4"
+    },
+    {
+      "path": "assets/evidence/discrepancy_parameter_error.png",
+      "bytes": 97387,
+      "sha256": "adc674689f8ae122e8cf0318a85fc895f609c3128e8f4d68db55a7c5a2021637"
+    },
+    {
+      "path": "assets/evidence/inverse_forecast.png",
+      "bytes": 136809,
+      "sha256": "c8d1ed39ec37b35dd4e96647c25e0bb124571a8de74297011615c276de9a5133"
+    },
+    {
+      "path": "assets/evidence/inverse_true_vs_inferred_mu.png",
+      "bytes": 81260,
+      "sha256": "0f144ef5a99d4f207893dc0e470fa21e635a960177b485e52130a429416324c9"
+    },
+    {
+      "path": "assets/evidence/neusa_budget_occupancy_force.png",
+      "bytes": 70885,
+      "sha256": "e9912dacf61752ce2b47b984ee192aba258775958f9996a397f1b1d39591e558"
+    },
+    {
+      "path": "assets/evidence/neusa_budget_trajectory.png",
+      "bytes": 83203,
+      "sha256": "64607f668939e6e0e2f27ecd429ba87d2396bddead24c078f0fda33e231b5357"
+    },
+    {
+      "path": "assets/evidence/neusa_budget_transfer_force.png",
+      "bytes": 88203,
+      "sha256": "5a05bbb8c3bbc10ad24a3126de24a77a686e6f3cbc66e16d981b44880e6cfac0"
+    },
+    {
+      "path": "assets/evidence/neusa_force_cubic.png",
+      "bytes": 79988,
+      "sha256": "3d7c8a0a06dc39e1d3e0a4d00c7527a87ed50180d2b14b511cd37739f99b5c49"
+    },
+    {
+      "path": "assets/evidence/neusa_force_free.png",
+      "bytes": 89704,
+      "sha256": "9eda1eb15c8edb665a1270d89096cd843bd32779b088d11da67ddb8618e2a66f"
+    },
+    {
+      "path": "assets/evidence/neusa_linearized_energy_base.png",
+      "bytes": 81601,
+      "sha256": "13001203d431231c903076155bbbe1118bfed068aca5eb3c9b38fce55c69740d"
+    },
+    {
+      "path": "assets/evidence/neusa_linearized_energy_structured.png",
+      "bytes": 112986,
+      "sha256": "fdc46ef3584ec33bce8c91340effc3eb15c83dad134fc84652d9e8e3d1866b9b"
+    },
+    {
+      "path": "assets/evidence/neusa_linearized_error_base.png",
+      "bytes": 86049,
+      "sha256": "6ed91abe8e96ef2f3a7fd8f3671bd4be2660249c6ae086ff912018f899dbf6a5"
+    },
+    {
+      "path": "assets/evidence/neusa_linearized_error_structured.png",
+      "bytes": 89537,
+      "sha256": "cfeca522a5509300e5a72638d6bde71f452f45564f8abcdcd16527adccd81df5"
+    },
+    {
+      "path": "assets/evidence/neusa_locality_double.png",
+      "bytes": 91443,
+      "sha256": "5beb9fd83fa1c8f3537bf8f6e2470338b8ddf301fd22c6e053d6de841d4d632a"
+    },
+    {
+      "path": "assets/evidence/neusa_locality_shifted.png",
+      "bytes": 83858,
+      "sha256": "f77177ed17cb208d322adbb4d154e7383c601d310bd87461b66695663b51e7e6"
+    },
+    {
+      "path": "assets/evidence/neusa_odd_seed42_error.png",
+      "bytes": 71658,
+      "sha256": "5f245df87d1c535b872cf1a0fae0902c3edaae80e3ea929891cec1e2b72adc0a"
+    },
+    {
+      "path": "assets/evidence/neusa_parametric_error_vs_mu.png",
+      "bytes": 115011,
+      "sha256": "3bbf8bb8797fb380ba4cbdc6c18d09321a1e035db8a8bb468e503b227259b344"
+    },
+    {
+      "path": "assets/evidence/neusa_parametric_recovered_mu.png",
+      "bytes": 110401,
+      "sha256": "a07878a565854330e2708ae09ab34519fe7415a60da42bfae8c29a940c98fb8c"
+    },
+    {
+      "path": "assets/evidence/neusa_robustness_cdf.png",
+      "bytes": 136364,
+      "sha256": "1ac865a711dbc24a0a292168043fd01889a848946c29b95b9f516f47df8affd5"
+    },
+    {
+      "path": "assets/evidence/neusa_robustness_long_horizon.png",
+      "bytes": 91443,
+      "sha256": "85407f57688f8b220b3b1d596dc39751672fd860d7ee06632a02a1a24751de46"
+    },
+    {
+      "path": "assets/evidence/neusa_symbolic_u3.png",
+      "bytes": 98223,
+      "sha256": "d12301779ee3c79cab96dd0ae800048045a1038047ecbee240ffc0d0201ed381"
+    },
+    {
+      "path": "assets/evidence/pinn_alignment_vs_amplitude.png",
+      "bytes": 64877,
+      "sha256": "ccac9338f43944277c42eab6453dd9c1f62ab880d5b9d3b7a8017058e51e1458"
+    },
+    {
+      "path": "assets/evidence/pinn_checkpoint_cosine.png",
+      "bytes": 143624,
+      "sha256": "3d4599505e8c21a952bbd85e94d0b241b100e2f805d175c73870fdfc58c64e8b"
+    },
+    {
+      "path": "assets/evidence/pinn_checkpoint_relative_l2.png",
+      "bytes": 145061,
+      "sha256": "24b687f94c484294100caee9d5982aeaabac9b36981434f5a5bbeff6ca467807"
+    },
+    {
+      "path": "assets/evidence/pinn_early_middle_late.png",
+      "bytes": 55679,
+      "sha256": "2fc1cfb109c0a263aa1f2d3e95d61515ac6c10bf181024b2668ac99ab6a7091d"
+    },
+    {
+      "path": "assets/evidence/pinn_seed_level_relative_l2.png",
+      "bytes": 51442,
+      "sha256": "329f234ff44076694c846482461d1e163294b6fde2b32d3310fb4ebdb316a0af"
+    },
+    {
+      "path": "assets/evidence/pseudotrue_far_success.png",
+      "bytes": 184319,
+      "sha256": "c191b7b2bb11f449348fb9d46e4db5285023642a0c29465373d099dcb3a9fd6a"
+    },
+    {
+      "path": "assets/evidence/pseudotrue_paradox_case.png",
+      "bytes": 187375,
+      "sha256": "ca2bb2e1690b1daee4f4b1ca0654ca70ee45adf8fb9f67fc38ff6688b1be9ca7"
+    },
+    {
+      "path": "assets/evidence/pseudotrue_physical_vs_predictive.png",
+      "bytes": 93105,
+      "sha256": "9f5db47db6e1428cd7fca3040d792bf75b0c8784b1bf373aa8b1a45c60ded52d"
+    },
+    {
+      "path": "assets/evidence/pseudotrue_tradeoff.png",
+      "bytes": 104152,
+      "sha256": "1f7b38e0c21804901a37c00044ddcf6740ae81c9cee66b0054a37a2ee72f75c3"
+    },
+    {
+      "path": "assets/evidence/raw/discrepancy_uq_summary.json",
+      "bytes": 5475,
+      "sha256": "d4eabb2b4ec2088318ecfe020608c9cdf2dbc959f1cca0de065e5a1a1c5929ac"
+    },
+    {
+      "path": "assets/evidence/raw/inverse_calibration_summary.json",
+      "bytes": 3896,
+      "sha256": "d30dfeea045d4c52fb8f3a2376c722d9a8c54e46352c297efa4599a410ec04e9"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_budget_summary.json",
+      "bytes": 13323,
+      "sha256": "b9b8b463bbe0ea2f59a1ca00d8741322ec1f176357be94aaf9076be402529ad8"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_force_budget_summary.json",
+      "bytes": 6336,
+      "sha256": "447567664791c26c7f81adfa21b7932d40e5af026023d0795fb8ebac0584867f"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_linearized_summary.json",
+      "bytes": 6157,
+      "sha256": "abaa968ca8c2d55c69d6ecd20e5bc4c714c6524237e78ebd1fb320edab643557"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_locality_summary.json",
+      "bytes": 72242,
+      "sha256": "58f1388e7b5d006d3160cf841578d116eeef190e308025d6e863501fb639a720"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_odd_summary.json",
+      "bytes": 6720,
+      "sha256": "4638cdc9b5d02b991eb074c46e76e2eb9e26e3ffc12851f48431d5424cd346f7"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_parametric_summary.json",
+      "bytes": 12875,
+      "sha256": "94cc1b6e06963ec3dc33dd0adf6fe0747a59f7b77510572fc4386de036242a95"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_robustness_summary.json",
+      "bytes": 5428,
+      "sha256": "2fe71ee317fc9b2aa0e4da5b43e6554e454584867236e0f07b4dc788d7707e89"
+    },
+    {
+      "path": "assets/evidence/raw/neusa_symbolic_summary.json",
+      "bytes": 17990,
+      "sha256": "99e7f63827e4a0524430616f44ed238c5eae454056729f3352d95e631d671e5b"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_adaptive_summary.json",
+      "bytes": 2382,
+      "sha256": "6679b076d500c2f22a1f1e75047b435f7aba010a8f5126f18827a21053afc7dc"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_baseline_metrics.json",
+      "bytes": 429,
+      "sha256": "0799723ae2b225fbf311116eb4aabc2dbb015e962487f48a29be50723848fc43"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_causal_summary.json",
+      "bytes": 1567,
+      "sha256": "6d9f31c8a315e0848b7bd5c41e46f25c211a0c1393b111eb21dcc534d8691ac8"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_confirmatory_summary.json",
+      "bytes": 16702,
+      "sha256": "19eff4f174690629363fe560268dfed2ccf0cee88cb41bbefb1c80c0921587ce"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_development_matrix.json",
+      "bytes": 2946,
+      "sha256": "f03ad3a20934257a2d2ed6746d7e91945a44725c1ce6964f0b2b5a900802632d"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_dispersion20_summary.json",
+      "bytes": 5488,
+      "sha256": "06137bb8ab528dd94f7ed9d3b8f1dfa59ccda01610e111591043bada6e8880af"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_optimization_regimes.json",
+      "bytes": 8674,
+      "sha256": "2fc07df7666b45e7f22ea7d8ff12126cec9623df6e68f2ebb7369ba155ea6ee8"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_sigma20_summary.json",
+      "bytes": 6569,
+      "sha256": "aaf68fdeb48d3c5660f2b2baba0f38cdaf8946de66c47085d7174c25b0cfb8e0"
+    },
+    {
+      "path": "assets/evidence/raw/pinn_source_visibility_summary.json",
+      "bytes": 1901,
+      "sha256": "d2fea91ad80f53eca5718eea7e855b04b1fea57afc3d4f86cfb0ed9fa2d14070"
+    },
+    {
+      "path": "assets/evidence/raw/pseudotrue_summary.json",
+      "bytes": 3287,
+      "sha256": "fd12703e75ea741721e6cd7575d0496b4e7b05de57911d08281c5a9fa3fe0f9f"
+    },
+    {
+      "path": "assets/evidence/raw/uq_sensor_design.json",
+      "bytes": 1486,
+      "sha256": "094861ac6195a6db087c3dbcb1e7a562dd01ff8c199f3a9acea18fd759f7a2cd"
+    },
+    {
+      "path": "assets/evidence/raw/uq_sensor_summary.json",
+      "bytes": 2994,
+      "sha256": "d1b8617476876365a1593d2dbac8ac0aa77d1bc18e80a8c1c12b12c99b16d412"
+    },
+    {
+      "path": "assets/evidence/uq_coverage_vs_width.png",
+      "bytes": 84893,
+      "sha256": "b74e9d3e173dedb21ab446428df26157ad26b72d2138a5264c1d005f004297cf"
+    },
+    {
+      "path": "assets/evidence/uq_mu_error_layout.png",
+      "bytes": 59749,
+      "sha256": "9b1a528edc3b7ba9ae167b11a9f654801c5f0568171409c8e57c6a896e7acc39"
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "status": "completed",
+  "development_only": true,
+  "frequency": 20.0,
+  "seed": 5555,
+  "spatial_sigma": 10.0,
+  "pre_registered_ratios": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "configurations": {
+    "isotropic_sigma10": {
+      "geometry": "isotropic",
+      "final": {
+        "updates": 30000,
+        "relative_l2": 1.0255329608917236,
+        "prediction_l2_over_reference_l2": 0.522515594959259,
+        "cosine_similarity": 0.2112826406955719,
+        "prediction_maxabs_over_reference_maxabs": 1.480560302734375,
+        "error_early_third": 1.036651372909546,
+        "error_middle_third": 1.003272294998169,
+        "error_late_third": 1.2685247659683228
+      },
+      "encoder_stats": {
+        "target_frequency_cycles_per_unit": 20.0,
+        "temporal_abs_frequency": {
+          "median": 6.646671295166016,
+          "q90": 18.186847686767578,
+          "q95": 19.686275482177734,
+          "max": 34.16014862060547,
+          "count_in_target_band_0p5f_to_1p5f": 76
+        },
+        "spatial_radial_frequency": {
+          "median": 11.160930633544922,
+          "q90": 21.839099884033203,
+          "q95": 24.87725830078125,
+          "max": 34.93931198120117,
+          "count_in_target_band_0p5f_to_1p5f": 141
+        },
+        "joint_band_count": 47,
+        "dispersion_ratio_abs_bt_over_kr": {
+          "median": 0.5957368612289429,
+          "q10": 0.13803181052207947,
+          "q90": 2.286635398864746
+        },
+        "note": "FourierEncoder uses cos/sin(2*pi*x@B), so B entries are directly cycles per unit input coordinate. These are frozen random features."
+      }
+    },
+    "ratio_0.5": {
+      "geometry": "fixed_dispersion_ratio",
+      "dispersion_ratio": 0.5,
+      "final": {
+        "updates": 30000,
+        "relative_l2": 1.0033882856369019,
+        "prediction_l2_over_reference_l2": 0.43279412388801575,
+        "cosine_similarity": 0.2066756635904312,
+        "prediction_maxabs_over_reference_maxabs": 1.3280797004699707,
+        "error_early_third": 1.004988193511963,
+        "error_middle_third": 1.0014559030532837,
+        "error_late_third": 1.0726253986358643
+      },
+      "encoder_stats": {
+        "temporal": {
+          "median": 5.580465316772461,
+          "q90": 10.919549942016602,
+          "max": 17.469655990600586,
+          "count_10_30": 37
+        },
+        "spatial": {
+          "median": 11.160930633544922,
+          "q90": 21.839099884033203,
+          "max": 34.93931198120117,
+          "count_10_30": 141
+        },
+        "ratio_abs_bt_over_c_kr": {
+          "median": 0.5,
+          "q10": 0.5,
+          "q90": 0.5
+        },
+        "normalized_wave_cone_defect": {
+          "median": 0.6000000238418579,
+          "q90": 0.6000000238418579,
+          "max": 0.6000001430511475
+        },
+        "joint_target_band_count": 34
+      }
+    },
+    "ratio_1.0": {
+      "geometry": "fixed_dispersion_ratio",
+      "dispersion_ratio": 1.0,
+      "final": {
+        "updates": 30000,
+        "relative_l2": 0.9979444146156311,
+        "prediction_l2_over_reference_l2": 0.3399766683578491,
+        "cosine_similarity": 0.17468205094337463,
+        "prediction_maxabs_over_reference_maxabs": 1.005810260772705,
+        "error_early_third": 0.994942307472229,
+        "error_middle_third": 1.0009970664978027,
+        "error_late_third": 1.0437356233596802
+      },
+      "encoder_stats": {
+        "temporal": {
+          "median": 11.160930633544922,
+          "q90": 21.839099884033203,
+          "max": 34.93931198120117,
+          "count_10_30": 141
+        },
+        "spatial": {
+          "median": 11.160930633544922,
+          "q90": 21.839099884033203,
+          "max": 34.93931198120117,
+          "count_10_30": 141
+        },
+        "ratio_abs_bt_over_c_kr": {
+          "median": 1.0,
+          "q10": 1.0,
+          "q90": 1.0
+        },
+        "normalized_wave_cone_defect": {
+          "median": 0.0,
+          "q90": 7.847120286896825e-08,
+          "max": 1.1918194076088184e-07
+        },
+        "joint_target_band_count": 141
+      }
+    },
+    "ratio_2.0": {
+      "geometry": "fixed_dispersion_ratio",
+      "dispersion_ratio": 2.0,
+      "final": {
+        "updates": 30000,
+        "relative_l2": 1.135982871055603,
+        "prediction_l2_over_reference_l2": 0.5488736629486084,
+        "cosine_similarity": 0.010136249475181103,
+        "prediction_maxabs_over_reference_maxabs": 0.30461928248405457,
+        "error_early_third": 0.9920035600662231,
+        "error_middle_third": 1.047723650932312,
+        "error_late_third": 3.891639232635498
+      },
+      "encoder_stats": {
+        "temporal": {
+          "median": 22.321861267089844,
+          "q90": 43.678199768066406,
+          "max": 69.87862396240234,
+          "count_10_30": 142
+        },
+        "spatial": {
+          "median": 11.160930633544922,
+          "q90": 21.839099884033203,
+          "max": 34.93931198120117,
+          "count_10_30": 141
+        },
+        "ratio_abs_bt_over_c_kr": {
+          "median": 2.0,
+          "q10": 2.0,
+          "q90": 2.0
+        },
+        "normalized_wave_cone_defect": {
+          "median": 0.6000000238418579,
+          "q90": 0.6000000238418579,
+          "max": 0.6000000834465027
+        },
+        "joint_target_band_count": 67
+      }
+    }
+  },
+  "geometry_gain_ratio1_vs_best_offcone_fraction": 0.005425487918483371,
+  "geometry_gain_ratio1_vs_isotropic_sigma10_fraction": 0.026901667063049518,
+  "decision": "no_clean_dispersion_geometry_signal"
+}

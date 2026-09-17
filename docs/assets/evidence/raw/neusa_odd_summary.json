@@ -1,0 +1,232 @@
+{
+  "status": "completed",
+  "study": "local structural ladder on genuinely new held-out initial conditions",
+  "primary_metric": "relative L2 on (1,3], h=1/256",
+  "models": {
+    "local_libre": "locality only; r(0)=0",
+    "local_odd": "locality + exact odd symmetry; linear term allowed",
+    "local_cubica": "locality + odd symmetry + O(u^3) near zero"
+  },
+  "new_holdouts": {
+    "estrecho_desplazado": [
+      [
+        0.7,
+        -0.55,
+        0.07
+      ]
+    ],
+    "doble_asimetrico": [
+      [
+        0.65,
+        -0.9,
+        0.1
+      ],
+      [
+        0.35,
+        0.45,
+        0.1
+      ]
+    ],
+    "dipolo_signado": [
+      [
+        0.7,
+        -0.55,
+        0.1
+      ],
+      [
+        -0.45,
+        0.65,
+        0.12
+      ]
+    ]
+  },
+  "per_model_case": {
+    "local_libre": {
+      "estrecho_desplazado": {
+        "mean_error_1_3_percent": 8.769977722226365,
+        "sd_error_1_3_percent": 0.04383974292592659,
+        "values_1_3_percent": [
+          8.763774900241293,
+          8.729569745618322,
+          8.816588520819481
+        ],
+        "mean_error_3_5_percent": 17.325568456834706,
+        "sd_error_3_5_percent": 0.14260813338361097,
+        "values_3_5_percent": [
+          17.162609527257843,
+          17.427550852158312,
+          17.38654499108796
+        ]
+      },
+      "doble_asimetrico": {
+        "mean_error_1_3_percent": 8.169770991236083,
+        "sd_error_1_3_percent": 0.1494425311331112,
+        "values_1_3_percent": [
+          8.000598975943616,
+          8.28383058100063,
+          8.224883416764
+        ],
+        "mean_error_3_5_percent": 15.64247479387246,
+        "sd_error_3_5_percent": 0.5365250651608028,
+        "values_3_5_percent": [
+          15.070828455461033,
+          16.135117917099564,
+          15.721478009056783
+        ]
+      },
+      "dipolo_signado": {
+        "mean_error_1_3_percent": 7.296086067483839,
+        "sd_error_1_3_percent": 0.04989981189528494,
+        "values_1_3_percent": [
+          7.24844516287624,
+          7.291839646372312,
+          7.347973393202967
+        ],
+        "mean_error_3_5_percent": 12.191731698477767,
+        "sd_error_3_5_percent": 0.4244050078962126,
+        "values_3_5_percent": [
+          11.73434286182502,
+          12.572794748111471,
+          12.26805748549681
+        ]
+      }
+    },
+    "local_odd": {
+      "estrecho_desplazado": {
+        "mean_error_1_3_percent": 5.077397649218149,
+        "sd_error_1_3_percent": 2.5529979061490313,
+        "values_1_3_percent": [
+          6.808660057488687,
+          6.27812705351581,
+          2.1454058366499495
+        ],
+        "mean_error_3_5_percent": 11.362360970748533,
+        "sd_error_3_5_percent": 5.307707899923019,
+        "values_3_5_percent": [
+          14.949771970637006,
+          13.872098846673742,
+          5.26521209493485
+        ]
+      },
+      "doble_asimetrico": {
+        "mean_error_1_3_percent": 6.379380874744206,
+        "sd_error_1_3_percent": 3.350280232308475,
+        "values_1_3_percent": [
+          8.671323032500087,
+          7.932414889252144,
+          2.5344047024803875
+        ],
+        "mean_error_3_5_percent": 14.56195430529588,
+        "sd_error_3_5_percent": 7.32007047091686,
+        "values_3_5_percent": [
+          19.54485556110067,
+          17.98332474735351,
+          6.157682607433454
+        ]
+      },
+      "dipolo_signado": {
+        "mean_error_1_3_percent": 5.279671402916357,
+        "sd_error_1_3_percent": 2.9498071479205423,
+        "values_1_3_percent": [
+          7.313161211421955,
+          6.6293693162594165,
+          1.8964836810676997
+        ],
+        "mean_error_3_5_percent": 12.014124085260827,
+        "sd_error_3_5_percent": 6.426739307972232,
+        "values_3_5_percent": [
+          16.416766229827246,
+          14.986344811668445,
+          4.639261214286793
+        ]
+      }
+    },
+    "local_cubica": {
+      "estrecho_desplazado": {
+        "mean_error_1_3_percent": 0.4965217455007888,
+        "sd_error_1_3_percent": 0.020510417240211253,
+        "values_1_3_percent": [
+          0.4763369121756838,
+          0.5173429362357064,
+          0.49588538809097626
+        ],
+        "mean_error_3_5_percent": 0.9492035124860294,
+        "sd_error_3_5_percent": 0.038078768939352005,
+        "values_3_5_percent": [
+          0.9124534751987483,
+          0.9884847195310535,
+          0.9466723427282864
+        ]
+      },
+      "doble_asimetrico": {
+        "mean_error_1_3_percent": 0.5682712056274025,
+        "sd_error_1_3_percent": 0.024815732550424137,
+        "values_1_3_percent": [
+          0.5444618689303327,
+          0.5939837411736024,
+          0.5663680067782727
+        ],
+        "mean_error_3_5_percent": 0.9296075061850524,
+        "sd_error_3_5_percent": 0.04033133725986278,
+        "values_3_5_percent": [
+          0.891237565574478,
+          0.9716491496586845,
+          0.9259358033219947
+        ]
+      },
+      "dipolo_signado": {
+        "mean_error_1_3_percent": 0.6606416554070325,
+        "sd_error_1_3_percent": 0.02863711060377376,
+        "values_1_3_percent": [
+          0.6331507712970785,
+          0.6903016370994788,
+          0.6584725578245401
+        ],
+        "mean_error_3_5_percent": 1.1392067822683838,
+        "sd_error_3_5_percent": 0.04900563032483247,
+        "values_3_5_percent": [
+          1.0926029895955842,
+          1.1903046618562747,
+          1.1347126953532927
+        ]
+      }
+    }
+  },
+  "force_summary": {
+    "local_libre": {
+      "global_force_error_minus5_5_mean": 3.0239787135016463,
+      "occupancy_weighted_force_error_mean": 0.09228092317188624
+    },
+    "local_odd": {
+      "global_force_error_minus5_5_mean": 0.40493065640385195,
+      "occupancy_weighted_force_error_mean": 0.03538548280779638
+    },
+    "local_cubica": {
+      "global_force_error_minus5_5_mean": 0.41646152014453236,
+      "occupancy_weighted_force_error_mean": 0.004851273629681786
+    }
+  },
+  "pairwise_primary_dominance": {
+    "local_libre_vs_local_odd": {
+      "wins_first": 2,
+      "wins_second": 7,
+      "ties": 0
+    },
+    "local_cubica_vs_local_libre": {
+      "wins_first": 9,
+      "wins_second": 0,
+      "ties": 0
+    },
+    "local_cubica_vs_local_odd": {
+      "wins_first": 9,
+      "wins_second": 0,
+      "ties": 0
+    }
+  },
+  "guardrails": [
+    "Existing free/cubic models were already selected/developed before these new holdouts.",
+    "Odd model was trained only after these new holdouts were frozen in the plan.",
+    "This isolates odd-vs-cubic structure more cleanly within the local family, but it is still one PDE and three seeds.",
+    "Occupancy-weighted force error is an evaluation diagnostic, not a training objective."
+  ]
+}

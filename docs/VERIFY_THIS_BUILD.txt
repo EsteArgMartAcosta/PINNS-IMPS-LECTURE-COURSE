@@ -1,0 +1,10 @@
+BUILD: FINAL_SYNTHESIS_V1
+DATE: 2026-09-17
+
+This build:
+- removes the Structure vs transfer deep dive section;
+- removes the future project section;
+- keeps the Experiment Atlas with real evidence and the button fix;
+- replaces What I believe now with the final two-question scientific position;
+- adds an interactive background to the synthesis section;
+- uses MathJax for the equations in the final synthesis.

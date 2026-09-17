@@ -364,6 +364,11 @@
   function adjacentConcept(step){const idx=conceptData.nodes.findIndex(n=>n.id===state.activeConcept);const n=conceptData.nodes[(idx+step+conceptData.nodes.length)%conceptData.nodes.length];openConcept(n.id,false)}
   qs('#concept-prev').onclick=()=>adjacentConcept(-1);qs('#concept-next').onclick=()=>adjacentConcept(1);
   buildNodes();
+  // Premium-map default: open a representative W4 concept so the mathematical
+  // drawer is immediately populated. This is still a live selection and can
+  // be changed by clicking any node.
+  state.activeTab='intuition';
+  openConcept('neuralode', false);
 
   const story=['pde','pinn','causality','spectralbias','fourier','sampling','abc','neuralode','integrator','spectralbasis','neusa','transfer'];
   qs('#storyline-track').innerHTML=story.map((id,i)=>`<span class="story-step"><button data-id="${id}">${lang(nodeById.get(id).label)}</button>${i<story.length-1?'<span class="story-arrow">→</span>':''}</span>`).join('');

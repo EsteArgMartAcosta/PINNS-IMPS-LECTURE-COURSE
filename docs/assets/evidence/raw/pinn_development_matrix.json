@@ -1,0 +1,77 @@
+{
+  "status": "completed",
+  "development_only": true,
+  "seed": 5555,
+  "protocol": {
+    "uniform_points_per_update": 8000,
+    "boundary_points_per_face": 200,
+    "boundary": "higdon2",
+    "epochs": 300,
+    "steps_per_epoch": 100,
+    "updates": 30000,
+    "optimizer": "Adam(lr=0.003, betas=(0.9,0.999))",
+    "scheduler": "ExponentialLR(gamma=0.99)"
+  },
+  "configurations": {
+    "ff_10": {
+      "final_updates": 30000,
+      "final_relative_l2": 0.05569944903254509,
+      "final_cosine_similarity": 0.998638391494751,
+      "final_norm_ratio": 1.00018310546875,
+      "final_peak_ratio": 0.9940056800842285,
+      "final_early_error": 0.024728000164031982,
+      "final_middle_error": 0.05565979704260826,
+      "final_late_error": 0.14852017164230347,
+      "first_checkpoint_below_0p5": 10000,
+      "first_checkpoint_below_0p2": 20000,
+      "first_checkpoint_below_0p1": 20000
+    },
+    "matched_10": {
+      "final_updates": 30000,
+      "final_relative_l2": 1.000182032585144,
+      "final_cosine_similarity": -0.00371539150364697,
+      "final_norm_ratio": 0.015213138423860073,
+      "final_peak_ratio": 0.001472823671065271,
+      "final_early_error": 0.9999921917915344,
+      "final_middle_error": 1.0003468990325928,
+      "final_late_error": 0.9997049570083618,
+      "first_checkpoint_below_0p5": null,
+      "first_checkpoint_below_0p2": null,
+      "first_checkpoint_below_0p1": null
+    },
+    "matched_20": {
+      "final_updates": 30000,
+      "final_relative_l2": 1.0001269578933716,
+      "final_cosine_similarity": -0.0021806659642606974,
+      "final_norm_ratio": 0.015223804861307144,
+      "final_peak_ratio": 0.0009483719477429986,
+      "final_early_error": 1.0000015497207642,
+      "final_middle_error": 1.0002696514129639,
+      "final_late_error": 1.0013444423675537,
+      "first_checkpoint_below_0p5": null,
+      "first_checkpoint_below_0p2": null,
+      "first_checkpoint_below_0p1": null
+    },
+    "ff_20": {
+      "final_updates": 30000,
+      "final_relative_l2": 1.003990888595581,
+      "final_cosine_similarity": 0.17455992102622986,
+      "final_norm_ratio": 0.3703789710998535,
+      "final_peak_ratio": 1.1806528568267822,
+      "final_early_error": 0.9781587719917297,
+      "final_middle_error": 1.0018123388290405,
+      "final_late_error": 1.5470430850982666,
+      "first_checkpoint_below_0p5": null,
+      "first_checkpoint_below_0p2": null,
+      "first_checkpoint_below_0p1": null
+    }
+  },
+  "predefined_representation_advantage": {
+    "definition": "A_f = log(E_matched(f) / E_FF(f))",
+    "A_10": 2.8879670398128248,
+    "A_20": -0.003855996289455224,
+    "interaction_I_A20_minus_A10": -2.89182303610228,
+    "interpretation": "Positive A_f favors Fourier features. Positive interaction means the Fourier-feature advantage increases from 10 Hz to 20 Hz."
+  },
+  "caveat": "Seed 5555 is development-only for this controlled matrix. Do not use it in confirmatory inference."
+}

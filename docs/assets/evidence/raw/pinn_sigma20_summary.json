@@ -1,0 +1,165 @@
+{
+  "status": "completed",
+  "development_only": true,
+  "frequency": 20.0,
+  "seed": 5555,
+  "sigma_values": [
+    1.0,
+    5.0,
+    10.0,
+    20.0
+  ],
+  "pre_registered_rationale": {
+    "sigma_1": "validated repository baseline; physical target 20 cycles/unit lies at 20 standard deviations of each Fourier-coordinate distribution",
+    "sigma_5": "target 20 cycles/unit is 4 sigma",
+    "sigma_10": "target 20 cycles/unit is 2 sigma",
+    "sigma_20": "target 20 cycles/unit is 1 sigma"
+  },
+  "selection_rule": "Primary development metric: final fine-grid relative L2 at 30,000 updates. Select the sigma with the smallest value. If two values differ by less than 5% relative, prefer the smaller sigma. Cosine similarity and time-third errors are secondary diagnostics.",
+  "configurations": {
+    "1.0": {
+      "sigma": 1.0,
+      "source": "existing validated baseline",
+      "final": {
+        "relative_l2": 1.0042327642440796,
+        "relative_l1": 1.3488138914108276,
+        "prediction_l2_over_reference_l2": 0.37018802762031555,
+        "cosine_similarity": 0.17558160424232483,
+        "prediction_maxabs_over_reference_maxabs": 1.1547726392745972,
+        "error_early_third": 0.9786726832389832,
+        "error_middle_third": 1.002261757850647,
+        "error_late_third": 1.5900719165802002
+      },
+      "encoder_stats": null,
+      "first_checkpoint_below_0p5": null,
+      "first_checkpoint_below_0p2": null,
+      "first_checkpoint_below_0p1": null
+    },
+    "10.0": {
+      "sigma": 10.0,
+      "source": "results/ff_sigma20_sweep/FF20_SIGMA_10p0",
+      "final": {
+        "updates": 30000,
+        "relative_l2": 1.0255329608917236,
+        "prediction_l2_over_reference_l2": 0.522515594959259,
+        "cosine_similarity": 0.2112826406955719,
+        "prediction_maxabs_over_reference_maxabs": 1.480560302734375,
+        "error_early_third": 1.036651372909546,
+        "error_middle_third": 1.003272294998169,
+        "error_late_third": 1.2685247659683228
+      },
+      "encoder_stats": {
+        "target_frequency_cycles_per_unit": 20.0,
+        "temporal_abs_frequency": {
+          "median": 6.646671295166016,
+          "q90": 18.186847686767578,
+          "q95": 19.686275482177734,
+          "max": 34.16014862060547,
+          "count_in_target_band_0p5f_to_1p5f": 76
+        },
+        "spatial_radial_frequency": {
+          "median": 11.160930633544922,
+          "q90": 21.839099884033203,
+          "q95": 24.87725830078125,
+          "max": 34.93931198120117,
+          "count_in_target_band_0p5f_to_1p5f": 141
+        },
+        "joint_band_count": 47,
+        "dispersion_ratio_abs_bt_over_kr": {
+          "median": 0.5957368612289429,
+          "q10": 0.13803181052207947,
+          "q90": 2.286635398864746
+        },
+        "note": "FourierEncoder uses cos/sin(2*pi*x@B), so B entries are directly cycles per unit input coordinate. These are frozen random features."
+      },
+      "first_checkpoint_below_0p5": null,
+      "first_checkpoint_below_0p2": null,
+      "first_checkpoint_below_0p1": null
+    },
+    "20.0": {
+      "sigma": 20.0,
+      "source": "results/ff_sigma20_sweep/FF20_SIGMA_20p0",
+      "final": {
+        "updates": 30000,
+        "relative_l2": 1.008384108543396,
+        "prediction_l2_over_reference_l2": 0.13280022144317627,
+        "cosine_similarity": 0.00195864075794816,
+        "prediction_maxabs_over_reference_maxabs": 0.008238296024501324,
+        "error_early_third": 1.0000313520431519,
+        "error_middle_third": 1.0002176761627197,
+        "error_late_third": 1.3905982971191406
+      },
+      "encoder_stats": {
+        "target_frequency_cycles_per_unit": 20.0,
+        "temporal_abs_frequency": {
+          "median": 13.293342590332031,
+          "q90": 36.373695373535156,
+          "q95": 39.37255096435547,
+          "max": 68.32029724121094,
+          "count_in_target_band_0p5f_to_1p5f": 113
+        },
+        "spatial_radial_frequency": {
+          "median": 22.321861267089844,
+          "q90": 43.678199768066406,
+          "q95": 49.7545166015625,
+          "max": 69.87862396240234,
+          "count_in_target_band_0p5f_to_1p5f": 142
+        },
+        "joint_band_count": 62,
+        "dispersion_ratio_abs_bt_over_kr": {
+          "median": 0.5957368612289429,
+          "q10": 0.13803181052207947,
+          "q90": 2.286635398864746
+        },
+        "note": "FourierEncoder uses cos/sin(2*pi*x@B), so B entries are directly cycles per unit input coordinate. These are frozen random features."
+      },
+      "first_checkpoint_below_0p5": null,
+      "first_checkpoint_below_0p2": null,
+      "first_checkpoint_below_0p1": null
+    },
+    "5.0": {
+      "sigma": 5.0,
+      "source": "results/ff_sigma20_sweep/FF20_SIGMA_5p0",
+      "final": {
+        "updates": 30000,
+        "relative_l2": 1.0144908428192139,
+        "prediction_l2_over_reference_l2": 0.6225340366363525,
+        "cosine_similarity": 0.2881891131401062,
+        "prediction_maxabs_over_reference_maxabs": 1.2880430221557617,
+        "error_early_third": 1.027258276939392,
+        "error_middle_third": 1.0005288124084473,
+        "error_late_third": 1.0082755088806152
+      },
+      "encoder_stats": {
+        "target_frequency_cycles_per_unit": 20.0,
+        "temporal_abs_frequency": {
+          "median": 3.323335647583008,
+          "q90": 9.093423843383789,
+          "q95": 9.843137741088867,
+          "max": 17.080074310302734,
+          "count_in_target_band_0p5f_to_1p5f": 11
+        },
+        "spatial_radial_frequency": {
+          "median": 5.580465316772461,
+          "q90": 10.919549942016602,
+          "q95": 12.438629150390625,
+          "max": 17.469655990600586,
+          "count_in_target_band_0p5f_to_1p5f": 37
+        },
+        "joint_band_count": 1,
+        "dispersion_ratio_abs_bt_over_kr": {
+          "median": 0.5957368612289429,
+          "q10": 0.13803181052207947,
+          "q90": 2.286635398864746
+        },
+        "note": "FourierEncoder uses cos/sin(2*pi*x@B), so B entries are directly cycles per unit input coordinate. These are frozen random features."
+      },
+      "first_checkpoint_below_0p5": null,
+      "first_checkpoint_below_0p2": null,
+      "first_checkpoint_below_0p1": null
+    }
+  },
+  "selected_sigma_development": 1.0,
+  "selected_final_relative_l2": 1.0042327642440796,
+  "next_rule": "If at least one nonbaseline sigma materially rescues 20 Hz, freeze the selected sigma before held-out seeds. If none does, do not expand the sigma grid; instead test the source-visibility hypothesis with a fixed uniform-sampling control."
+}

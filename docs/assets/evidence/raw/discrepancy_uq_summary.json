@@ -1,0 +1,146 @@
+{
+  "status": "completed",
+  "study": "Fresh extrapolation test of discrepancy-aware UQ",
+  "fresh_mu": {
+    "near_extrapolation": [
+      4.25,
+      15.75
+    ],
+    "far_extrapolation": [
+      3.25,
+      16.75
+    ]
+  },
+  "aggregate": {
+    "near_extrapolation": {
+      "fixed_sparse12": {
+        "n": 18,
+        "naive_mean_mu_abs_error": 0.2169995837741428,
+        "corrected_mean_mu_abs_error": 0.14353888827426534,
+        "naive_ci90_coverage": 0.5,
+        "corrected_ci90_coverage": 0.8888888888888888,
+        "naive_mean_ci90_width": 0.28031555636881705,
+        "corrected_mean_ci90_width": 0.5666196132939406,
+        "naive_mean_forecast_3_5_percent": 5.635372814198385,
+        "corrected_mean_forecast_3_5_percent": 4.639333475731078
+      },
+      "fisher12": {
+        "n": 18,
+        "naive_mean_mu_abs_error": 0.1566784381866455,
+        "corrected_mean_mu_abs_error": 0.12324380476841698,
+        "naive_ci90_coverage": 0.5,
+        "corrected_ci90_coverage": 0.8888888888888888,
+        "naive_mean_ci90_width": 0.20995071485385372,
+        "corrected_mean_ci90_width": 0.5573188095453394,
+        "naive_mean_forecast_3_5_percent": 3.8328425781954993,
+        "corrected_mean_forecast_3_5_percent": 5.963163247324191
+      },
+      "random12": {
+        "n": 18,
+        "naive_mean_mu_abs_error": 0.19455062018500435,
+        "corrected_mean_mu_abs_error": 0.2517548877217835,
+        "naive_ci90_coverage": 0.8333333333333334,
+        "corrected_ci90_coverage": 0.7222222222222222,
+        "naive_mean_ci90_width": 0.40325584802684805,
+        "corrected_mean_ci90_width": 0.8008726352801143,
+        "naive_mean_forecast_3_5_percent": 5.6309478556256645,
+        "corrected_mean_forecast_3_5_percent": 9.65254995003179
+      }
+    },
+    "far_extrapolation": {
+      "fixed_sparse12": {
+        "n": 18,
+        "naive_mean_mu_abs_error": 0.715420577261183,
+        "corrected_mean_mu_abs_error": 0.29384474494350943,
+        "naive_ci90_coverage": 0.0,
+        "corrected_ci90_coverage": 0.5,
+        "naive_mean_ci90_width": 0.27510989919938983,
+        "corrected_mean_ci90_width": 0.8975708654411506,
+        "naive_mean_forecast_3_5_percent": 23.836885059274596,
+        "corrected_mean_forecast_3_5_percent": 9.618149353899902
+      },
+      "fisher12": {
+        "n": 18,
+        "naive_mean_mu_abs_error": 0.6167593134774102,
+        "corrected_mean_mu_abs_error": 0.1976712752820405,
+        "naive_ci90_coverage": 0.0,
+        "corrected_ci90_coverage": 0.7777777777777778,
+        "naive_mean_ci90_width": 0.19961604217639095,
+        "corrected_mean_ci90_width": 0.9199020798108859,
+        "naive_mean_forecast_3_5_percent": 19.87465273053415,
+        "corrected_mean_forecast_3_5_percent": 7.885172994543132
+      },
+      "random12": {
+        "n": 18,
+        "naive_mean_mu_abs_error": 0.6628948052724203,
+        "corrected_mean_mu_abs_error": 0.3183881933858212,
+        "naive_ci90_coverage": 0.0,
+        "corrected_ci90_coverage": 0.6666666666666666,
+        "naive_mean_ci90_width": 0.38714174549893915,
+        "corrected_mean_ci90_width": 1.0236745549155155,
+        "naive_mean_forecast_3_5_percent": 21.45032396273352,
+        "corrected_mean_forecast_3_5_percent": 11.23370755380118
+      }
+    }
+  },
+  "ensemble_task_level": {
+    "near_extrapolation": {
+      "fixed_sparse12": {
+        "n": 6,
+        "naive_ensemble_coverage": 0.5,
+        "corrected_ensemble_coverage": 1.0,
+        "naive_mean_interval_width": 0.34501847596991375,
+        "corrected_mean_interval_width": 0.6392116073359707
+      },
+      "fisher12": {
+        "n": 6,
+        "naive_ensemble_coverage": 0.6666666666666666,
+        "corrected_ensemble_coverage": 0.8333333333333334,
+        "naive_mean_interval_width": 0.2596955605700246,
+        "corrected_mean_interval_width": 0.6058020158193127
+      },
+      "random12": {
+        "n": 6,
+        "naive_ensemble_coverage": 0.8333333333333334,
+        "corrected_ensemble_coverage": 0.8333333333333334,
+        "naive_mean_interval_width": 0.45676417989323187,
+        "corrected_mean_interval_width": 0.8642787261509307
+      }
+    },
+    "far_extrapolation": {
+      "fixed_sparse12": {
+        "n": 6,
+        "naive_ensemble_coverage": 0.0,
+        "corrected_ensemble_coverage": 0.5,
+        "naive_mean_interval_width": 0.3046058517737433,
+        "corrected_mean_interval_width": 0.9221136314264086
+      },
+      "fisher12": {
+        "n": 6,
+        "naive_ensemble_coverage": 0.0,
+        "corrected_ensemble_coverage": 0.8333333333333334,
+        "naive_mean_interval_width": 0.22293520792021168,
+        "corrected_mean_interval_width": 0.9339773255444032
+      },
+      "random12": {
+        "n": 6,
+        "naive_ensemble_coverage": 0.0,
+        "corrected_ensemble_coverage": 0.6666666666666666,
+        "naive_mean_interval_width": 0.40888287097345916,
+        "corrected_mean_interval_width": 1.0477254392374067
+      }
+    }
+  },
+  "paired_improvements": {
+    "corrected_wins_mu_error": 81,
+    "corrected_wins_forecast_3_5": 76,
+    "paired_total": 108
+  },
+  "guardrails": [
+    "Discrepancy model fit only on old extrapolation points 3.75 and 16.25.",
+    "Fresh coefficients 4.25, 15.75, 3.25, 16.75 were frozen before evaluation.",
+    "Correction assumes side-specific shrinkage and distance-scaled discrepancy outside [5,15].",
+    "Intervals remain approximate; this is not an exact Bayesian posterior.",
+    "All NeuSA weights remain frozen."
+  ]
+}

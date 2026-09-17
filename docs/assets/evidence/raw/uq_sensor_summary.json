@@ -1,0 +1,83 @@
+{
+  "status": "completed",
+  "study": "Fisher sensor design + local uncertainty for inverse calibration",
+  "aggregate": {
+    "interpolation": {
+      "fixed_sparse12": {
+        "n": 18,
+        "mean_mu_abs_error": 0.07381847169664171,
+        "q90_mu_abs_error": 0.136820125579834,
+        "mean_forecast_3_5_percent": 2.593711847791955,
+        "q90_forecast_3_5_percent": 4.081313590062766,
+        "ci90_empirical_coverage": 0.9444444444444444,
+        "mean_ci90_width": 0.3309287584011954
+      },
+      "fisher12": {
+        "n": 18,
+        "mean_mu_abs_error": 0.04945105976528592,
+        "q90_mu_abs_error": 0.13465147018432616,
+        "mean_forecast_3_5_percent": 2.1295884149623077,
+        "q90_forecast_3_5_percent": 4.024268803116158,
+        "ci90_empirical_coverage": 0.8333333333333334,
+        "mean_ci90_width": 0.27653390445673615
+      },
+      "random12": {
+        "n": 18,
+        "mean_mu_abs_error": 0.1567387580871582,
+        "q90_mu_abs_error": 0.2785578727722169,
+        "mean_forecast_3_5_percent": 4.803089962317363,
+        "q90_forecast_3_5_percent": 9.23352332037321,
+        "ci90_empirical_coverage": 0.8888888888888888,
+        "mean_ci90_width": 0.5221222308610397
+      }
+    },
+    "extrapolation": {
+      "fixed_sparse12": {
+        "n": 18,
+        "mean_mu_abs_error": 0.41572194629245335,
+        "q90_mu_abs_error": 0.6247042655944824,
+        "mean_forecast_3_5_percent": 12.620272108150237,
+        "q90_forecast_3_5_percent": 16.60685880903453,
+        "ci90_empirical_coverage": 0.0,
+        "mean_ci90_width": 0.2770688803972796
+      },
+      "fisher12": {
+        "n": 18,
+        "mean_mu_abs_error": 0.33356334103478325,
+        "q90_mu_abs_error": 0.6247013092041016,
+        "mean_forecast_3_5_percent": 9.35951050559268,
+        "q90_forecast_3_5_percent": 17.37671665497504,
+        "ci90_empirical_coverage": 0.0,
+        "mean_ci90_width": 0.20388845706949393
+      },
+      "random12": {
+        "n": 18,
+        "mean_mu_abs_error": 0.32864557372199166,
+        "q90_mu_abs_error": 0.7414034843444824,
+        "mean_forecast_3_5_percent": 9.505462963391793,
+        "q90_forecast_3_5_percent": 21.508328242257846,
+        "ci90_empirical_coverage": 0.4444444444444444,
+        "mean_ci90_width": 0.39280621881351724
+      }
+    }
+  },
+  "pairwise_layout_wins": {
+    "fisher12_vs_fixed_sparse12": {
+      "fisher_wins_mu_error": 25,
+      "fisher_wins_forecast_error": 27,
+      "paired_total": 36
+    },
+    "fisher12_vs_random12": {
+      "fisher_wins_mu_error": 22,
+      "fisher_wins_forecast_error": 20,
+      "paired_total": 36
+    }
+  },
+  "guardrails": [
+    "Fisher layout designed only from training mu values and training ICs.",
+    "All test tasks use 2% RMS Gaussian noise.",
+    "90% intervals use a local Fisher/Laplace approximation, not an exact posterior.",
+    "Surrogate model error is not explicitly included in interval width.",
+    "All NeuSA weights are frozen; only scalar mu is calibrated."
+  ]
+}

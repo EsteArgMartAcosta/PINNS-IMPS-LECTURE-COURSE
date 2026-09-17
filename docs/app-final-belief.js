@@ -364,6 +364,11 @@
   function adjacentConcept(step){const idx=conceptData.nodes.findIndex(n=>n.id===state.activeConcept);const n=conceptData.nodes[(idx+step+conceptData.nodes.length)%conceptData.nodes.length];openConcept(n.id,false)}
   qs('#concept-prev').onclick=()=>adjacentConcept(-1);qs('#concept-next').onclick=()=>adjacentConcept(1);
   buildNodes();
+  // Premium-map default: open a representative W4 concept so the mathematical
+  // drawer is immediately populated. This is still a live selection and can
+  // be changed by clicking any node.
+  state.activeTab='intuition';
+  openConcept('neuralode', false);
 
   const story=['pde','pinn','causality','spectralbias','fourier','sampling','abc','neuralode','integrator','spectralbasis','neusa','transfer'];
   qs('#storyline-track').innerHTML=story.map((id,i)=>`<span class="story-step"><button data-id="${id}">${lang(nodeById.get(id).label)}</button>${i<story.length-1?'<span class="story-arrow">→</span>':''}</span>`).join('');
@@ -527,6 +532,8 @@
     rail.innerHTML=weeks.map(w=>`<button class="timeline-dot ${w.id===activeWeek?'active':''}" data-week-id="${w.id}"><span>W0${w.id}</span><strong>${w.title}</strong></button>`).join('');
     qsa('.timeline-dot',rail).forEach(b=>b.onclick=()=>{activeWeek=Number(b.dataset.weekId);renderTimeline();});
     const w=weeks.find(x=>x.id===activeWeek)||weeks[0]; if(!w)return;
+    const timelineSection=qs('.timeline-section');
+    if(timelineSection) timelineSection.dataset.activeWeek=String(w.id);
     stage.innerHTML=`
       <div class="week-stage-head">
         <div><span class="timeline-kicker">${w.kicker}</span><h3>${w.title}</h3></div>
@@ -539,8 +546,90 @@
         <div class="week-block experiments"><span>WHAT I TESTED</span><ul>${w.experiments.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       </div>
       <div class="week-conclusion"><span>WHAT CHANGED</span><strong>${w.conclusion}</strong><p>${w.bridge}</p></div>`;
+    typesetMath(stage);
   }
   renderTimeline();
+
+  // -------------------------------------------------------------
+  // Timeline atmosphere — dynamic research currents
+  // -------------------------------------------------------------
+  const timelineSection=qs('.timeline-section');
+  if(timelineSection){
+    const timelineCanvas=document.createElement('canvas');
+    timelineCanvas.id='timeline-bg-canvas';
+    timelineCanvas.setAttribute('aria-hidden','true');
+    timelineSection.prepend(timelineCanvas);
+    const tctx=timelineCanvas.getContext('2d');
+    let tw=1,th=1,tdpr=1,tparticles=[];
+    const timelineColors={
+      1:[92,164,255],
+      2:[166,126,255],
+      3:[255,190,86],
+      4:[84,236,190]
+    };
+    function resizeTimelineCanvas(){
+      const r=timelineSection.getBoundingClientRect();
+      tw=Math.max(1,r.width); th=Math.max(1,r.height); tdpr=Math.min(devicePixelRatio||1,2);
+      timelineCanvas.width=Math.floor(tw*tdpr); timelineCanvas.height=Math.floor(th*tdpr);
+      timelineCanvas.style.width=tw+'px'; timelineCanvas.style.height=th+'px';
+      tctx.setTransform(tdpr,0,0,tdpr,0,0);
+      const n=clamp(Math.floor(tw*th/26000),42,110);
+      tparticles=Array.from({length:n},(_,i)=>({
+        x:Math.random()*tw,y:Math.random()*th,
+        vx:.05+Math.random()*.13,vy:(Math.random()-.5)*.035,
+        r:.5+Math.random()*1.25,a:.08+Math.random()*.18,phase:Math.random()*Math.PI*2
+      }));
+    }
+    function timelineWave(yBase,amp,freq,phase,color,alpha,width){
+      tctx.beginPath();
+      for(let x=-30;x<=tw+30;x+=8){
+        const y=yBase+Math.sin(x*freq+phase)*amp+Math.sin(x*freq*.37-phase*.7)*amp*.36;
+        if(x===-30)tctx.moveTo(x,y);else tctx.lineTo(x,y);
+      }
+      tctx.strokeStyle=`rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
+      tctx.lineWidth=width;tctx.stroke();
+    }
+    function drawTimelineAtmosphere(ms){
+      const t=ms*.001;
+      tctx.clearRect(0,0,tw,th);
+      const c=timelineColors[activeWeek]||timelineColors[1];
+      const fade=tctx.createLinearGradient(0,0,tw,th);
+      fade.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},.055)`);
+      fade.addColorStop(.42,'rgba(5,15,29,.01)');
+      fade.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},.035)`);
+      tctx.fillStyle=fade;tctx.fillRect(0,0,tw,th);
+
+      // travelling spectral / temporal traces
+      timelineWave(th*.17,24,0.0075,t*.34,c,.16,1.15);
+      timelineWave(th*.43,34,0.0052,-t*.25,[112,198,255],.10,1);
+      timelineWave(th*.78,26,0.0081,t*.19,[96,238,201],.095,1);
+      for(let j=0;j<3;j++){
+        timelineWave(th*(.24+j*.22),10+j*7,0.014-j*.002,t*(.42-j*.08)+j,c,.045,.6);
+      }
+
+      // moving particles that read like information flow
+      for(const p of tparticles){
+        p.x+=p.vx; p.y+=p.vy+Math.sin(t*.7+p.phase)*.015;
+        if(p.x>tw+20){p.x=-20;p.y=Math.random()*th;}
+        if(p.y<-20)p.y=th+20;if(p.y>th+20)p.y=-20;
+        const pulse=.55+.45*Math.sin(t*1.4+p.phase);
+        tctx.beginPath();tctx.arc(p.x,p.y,p.r*(.8+.35*pulse),0,Math.PI*2);
+        tctx.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${p.a*(.65+.35*pulse)})`;tctx.fill();
+      }
+
+      // faint vertical time markers
+      tctx.save();tctx.setLineDash([2,14]);tctx.lineWidth=.55;
+      for(let x=tw*.18;x<tw;x+=tw*.16){
+        tctx.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},.035)`;
+        tctx.beginPath();tctx.moveTo(x,th*.08);tctx.lineTo(x,th*.92);tctx.stroke();
+      }
+      tctx.restore();
+      requestAnimationFrame(drawTimelineAtmosphere);
+    }
+    const trObserver=new ResizeObserver(resizeTimelineCanvas);trObserver.observe(timelineSection);
+    resizeTimelineCanvas();
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(drawTimelineAtmosphere);
+  }
 
   // -------------------------------------------------------------
   // Experiment atlas
@@ -548,6 +637,77 @@
   const atlasData=window.SCIML_EXPERIMENTS||[];
   let atlasPhase='all', atlasSearch='';
   const toneToColor={blue:'var(--blue)',purple:'var(--purple)',amber:'var(--amber)',green:'var(--green)',cyan:'var(--cyan)',red:'var(--red)'};
+
+  // -----------------------------------------------------------------
+  // Correct LaTeX strings for experiment dossiers.
+  // Some formulas in the generated evidence dataset were serialized as
+  // normal JS strings, which corrupted commands such as \text, \theta,
+  // \argmin, \approx, and \tilde. We repair them here with raw strings
+  // so MathJax receives valid LaTeX.
+  // -----------------------------------------------------------------
+  const atlasMathById = {
+    'pinn-reproduction': String.raw`\[
+\mathcal L(\theta)=\lambda_r\,\mathcal L_r+\lambda_{IC}\,\mathcal L_{IC}+\lambda_{BC}\,\mathcal L_{BC}+\lambda_d\,\mathcal L_{\mathrm{data}}.
+\]`,
+    'pinn-seeds-frequency': String.raw`\[
+A_f = \log\!\left(\frac{E_{\mathrm{matched}}(f)}{E_{\mathrm{FF}}(f)}\right),\qquad I=A_{20}-A_{10}.
+\]`,
+    'pinn-sigma-sweep': String.raw`\[
+\gamma_{\sigma}(z)=\big[\sin(2\pi zB),\cos(2\pi zB)\big],\qquad B_{ij}\sim\mathcal N(0,\sigma^2).
+\]`,
+    'pinn-more-points': String.raw`\[
+N_{\mathrm{int}}: 8000\;\longrightarrow\;16000.
+\]`,
+    'pinn-dispersion': String.raw`\[
+|b_t| = c\sqrt{b_x^2+b_y^2}\qquad\text{(wave-cone alignment)}.
+\]`,
+    'pinn-causal': String.raw`\[
+\mathcal L = \sum_i w_i(\theta)\,\mathcal L_i,\qquad w_i\downarrow\ \text{when preceding residuals remain large}.
+\]`,
+    'pinn-adaptive': String.raw`\[
+\text{adaptive score} \propto |R_{\theta}(x,t)|.
+\]`,
+    'neusa-official': String.raw`\[
+\text{relative error}=\frac{\|u_{\theta}-u_{\mathrm{ref}}\|_2}{\|u_{\mathrm{ref}}\|_2}.
+\]`,
+    'neusa-linearized': String.raw`\[
+a^{\prime}=b,\qquad b^{\prime}=-(\Omega^2+10I)a+0.1\,N(a).
+\]`,
+    'neusa-local-cubic': String.raw`\[
+r_{\mathrm{cubic}}(u)=\frac{10}{6}u^3\,(1+z)^{-1}q\!\left(\frac{z}{1+z}\right),\qquad z=(u/4)^2.
+\]`,
+    'neusa-odd': String.raw`\[
+r_{\mathrm{odd}}(u)=5\,[q(u/4)-q(-u/4)],\qquad r_{\mathrm{cubic}}(u)\sim c\,u^3\;\text{near }0.
+\]`,
+    'neusa-compute': String.raw`\[
+\text{equal-budget comparison: }500\text{ updates total},\qquad \text{frontier comparison: }500\to1500.
+\]`,
+    'neusa-operator-recovery': String.raw`\[
+F_{\theta}(u)\approx-\hat\mu\sin u,\qquad \hat\mu=\arg\min_{\mu}\,\mathbb E_{u\sim\rho}\big[F_{\theta}(u)+\mu\sin u\big]^2.
+\]`,
+    'neusa-robustness': String.raw`\[
+\text{tail diagnostics: }\{\text{mean},\;q_{90},\;\max\}.
+\]`,
+    'parametric-neusa': String.raw`\[
+\mu \in \{5,7.5,10,12.5,15\}\;\text{train},\qquad \mu_{\mathrm{test}}\in\{6.25,8.75,11.25,13.75,3.75,16.25\}.
+\]`,
+    'inverse-calibration': String.raw`\[
+\hat\mu = \arg\min_{\mu}\,\sum_{(x_i,t_i)}\big(u_{\theta}(x_i,t_i;\mu)-y_i\big)^2.
+\]`,
+    'sensor-design': String.raw`\[
+\mathcal I(\mu) = J(\mu)^\top \Sigma^{-1}J(\mu),\qquad \text{maximize a scalar summary of }\mathcal I.
+\]`,
+    'uq-failure': String.raw`\[
+\mu\mid y \approx \mathcal N\!\left(\hat\mu,\,\mathcal I(\hat\mu)^{-1}\right).
+\]`,
+    'discrepancy-repair': String.raw`\[
+\tilde\mu = a_{\pm}\,\hat\mu + b_{\pm},\qquad \text{with side-specific discrepancy calibration}.
+\]`,
+    'pseudo-true': String.raw`\[
+\mu^{\dagger}_{\mathrm{obs}}\neq \mu^{\dagger}_{\mathrm{forecast}}\neq \mu_{\mathrm{true}}\quad\text{is possible under model misspecification}.
+\]`
+  };
+
   function filteredAtlas(){
     return atlasData.filter(e=>{
       const phaseOK=atlasPhase==='all'||e.phase===atlasPhase;
@@ -555,6 +715,27 @@
       return phaseOK&&(!atlasSearch||q.includes(atlasSearch));
     });
   }
+  function renderMiniFigure(fig){
+    if(!fig) return '';
+    if(fig.kind==='image'){
+      return `<figure class="mini-figure mini-figure-image"><div class="mini-figure-head"><strong>${fig.title||''}</strong></div><button class="evidence-image-button" data-image-src="${fig.src}" data-image-title="${escapeHtml(fig.title||'Evidence figure')}"><img src="${fig.src}" alt="${escapeHtml(fig.title||'Evidence figure')}" loading="lazy"/></button>${fig.caption?`<figcaption>${fig.caption}</figcaption>`:''}</figure>`;
+    }
+    if(fig.kind==='table'){
+      return `<div class="mini-figure mini-figure-table"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="evidence-table-wrap"><table class="evidence-table"><thead><tr>${(fig.columns||[]).map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${(fig.rows||[]).map(row=>`<tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+    }
+    if(fig.kind==='stats'){
+      return `<div class="mini-figure mini-figure-stats"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="mini-stats-grid">${(fig.items||[]).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><strong>${v}</strong></div>`).join('')}</div></div>`;
+    }
+    if(fig.kind==='bars'){
+      const vals=(fig.values||[]).map(Number); const max=Math.max(...vals,1);
+      return `<div class="mini-figure"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="mini-bars">${(fig.labels||[]).map((label,i)=>{const v=vals[i]??0; const h=12+Math.round((v/max)*84); const color=(fig.colors&&fig.colors[i])||'#7ca7ff'; return `<div class="mini-bar-item"><div class="mini-bar-wrap"><div class="mini-bar" style="height:${h}px;background:${color}"></div></div><strong>${v}${fig.suffix||''}</strong><span>${label}</span></div>`}).join('')}</div></div>`;
+    }
+    if(fig.kind==='note'){
+      return `<div class="mini-figure mini-figure-note"><div class="mini-figure-head"><strong>${fig.title||''}</strong></div><p>${fig.text||''}</p></div>`;
+    }
+    return '';
+  }
+
   function renderAtlas(){
     const grid=qs('#experiment-atlas-grid'); if(!grid)return;
     const rows=filteredAtlas(); qs('#atlas-count').textContent=rows.length;
@@ -563,11 +744,17 @@
         <div class="atlas-card-top"><span>${e.phase}</span><small>${e.category}</small></div>
         <h3>${e.title}</h3>
         <p class="atlas-question">${e.question}</p>
+        <div class="atlas-meta-row">
+          <div><span>runtime</span><strong>${e.runtime||'controlled run'}</strong></div>
+          <div><span>evaluation</span><strong>${e.evaluation||'comparative audit'}</strong></div>
+        </div>
+        ${e.figures?.[0] ? `<div class="atlas-figure-preview">${renderMiniFigure(e.figures[0])}</div>` : ''}
         <div class="atlas-answer"><span>ANSWER</span><strong>${e.answer}</strong></div>
         <div class="atlas-metrics">${e.metrics.slice(0,3).map(m=>`<span>${m}</span>`).join('')}</div>
-        <button class="atlas-open" data-atlas-id="${e.id}">Open evidence ↗</button>
+        <button class="atlas-open" data-atlas-id="${e.id}">Open full evidence ↗</button>
       </article>`).join('');
     qsa('.atlas-open',grid).forEach(b=>b.onclick=()=>openExperiment(b.dataset.atlasId));
+    qsa('.evidence-image-button',grid).forEach(b=>b.addEventListener('click',()=>openImageLightbox(b.dataset.imageSrc,b.dataset.imageTitle)));
   }
   qsa('[data-atlas]').forEach(b=>b.onclick=()=>{
     qsa('[data-atlas]').forEach(x=>x.classList.remove('active')); b.classList.add('active');
@@ -594,6 +781,17 @@
   qs('#atlas-search')?.addEventListener('input',e=>{atlasSearch=e.target.value.toLowerCase().trim();renderAtlas();});
   renderAtlas();
 
+  // Robust delegated handler: atlas cards are re-rendered by filters/search,
+  // so opening evidence should not depend on per-render listeners. Capture
+  // the click at the grid level and open the matching global drawer.
+  qs('#experiment-atlas-grid')?.addEventListener('click', e => {
+    const btn = e.target.closest?.('.atlas-open');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openExperiment(btn.dataset.atlasId);
+  });
+
   function openExperiment(id){
     const e=atlasData.find(x=>x.id===id); if(!e)return;
     qs('#drawer-kicker').textContent=`${e.phase.toUpperCase()} · ${e.category.toUpperCase()}`;
@@ -602,53 +800,265 @@
     qs('#drawer-control').textContent=e.design;
     qs('#drawer-change').textContent=e.result;
     qs('#drawer-readout').textContent=e.answer;
+    qs('#drawer-runtime').textContent=e.runtime || 'Controlled run';
+    qs('#drawer-evaluation').textContent=e.evaluation || 'Comparative evaluation';
+    qs('#drawer-achieved').innerHTML=(e.achieved||[]).map(x=>`<li>${x}</li>`).join('');
     qs('#drawer-rulesout').textContent=e.rulesOut;
+    qs('#drawer-math').innerHTML=atlasMathById[e.id] || e.math || ''; // repaired valid LaTeX
+    qs('#drawer-figures').innerHTML=(e.figures||[]).map(renderMiniFigure).join('');
+    qs('#drawer-sources').innerHTML=(e.sources||[]).length ? (e.sources||[]).map(s=>`<a class="evidence-source-link" href="${s.href}" target="_blank" rel="noopener">${s.label} ↗</a>`).join('') : '<span class="source-empty">No separate raw summary was included for this benchmark.</span>';
     qs('#drawer-note').textContent=`LIMITATION · ${e.limitation}`;
     qs('#drawer-metrics').innerHTML=e.metrics.map(m=>`<span>${m}</span>`).join('');
     qs('#protocol-drawer').classList.add('open');
     qs('#protocol-drawer').setAttribute('aria-hidden','false');
+    qsa('.evidence-image-button',qs('#protocol-drawer')).forEach(b=>b.addEventListener('click',()=>openImageLightbox(b.dataset.imageSrc,b.dataset.imageTitle)));
+    if(window.MathJax?.typesetPromise){
+      window.MathJax.typesetPromise([qs('#protocol-drawer')]).catch(()=>{});
+    }
   }
 
+  function openImageLightbox(src,title='Evidence figure'){
+    const box=qs('#evidence-lightbox'); if(!box)return;
+    qs('#evidence-lightbox-img').src=src;
+    qs('#evidence-lightbox-img').alt=title;
+    qs('#evidence-lightbox-title').textContent=title;
+    box.classList.add('open');
+    box.setAttribute('aria-hidden','false');
+  }
+  function closeImageLightbox(){
+    const box=qs('#evidence-lightbox'); if(!box)return;
+    box.classList.remove('open');
+    box.setAttribute('aria-hidden','true');
+  }
+  qs('#evidence-lightbox-close')?.addEventListener('click',closeImageLightbox);
+  qs('#evidence-lightbox-scrim')?.addEventListener('click',closeImageLightbox);
+
   // -------------------------------------------------------------
-  // Evidence-backed synthesis
+  // Final synthesis: two professor questions, one scientific position
   // -------------------------------------------------------------
-  const beliefEvidence={
-    representation:{
-      kicker:'EVIDENCE CHAIN',
-      title:'Representation is one piece of a larger numerical system.',
-      copy:'Frequency/seed experiments, the failed point-doubling rescue, causal-weighting failures, and adaptive-sampling pathology all point in the same direction: changing one ingredient does not repair a coupled optimization problem.',
-      pills:['frequency × seeds','8k→16k no rescue','adaptive ≈98% source concentration']
+  const synthesisData = {
+    conclusions: {
+      quote: 'My main conclusion from these experiments is that physics informed learning cannot be judged by the loss alone. It should be judged by what the learned dynamics survive beyond the training configuration.',
+      directAnswer: {
+        label:'DIRECT ANSWER · QUESTION A',
+        title:'My main conclusion from these experiments is that physics informed learning cannot be judged by the loss alone.',
+        copy:'It should be judged by whether the learned dynamics survive numerical checks, independent seeds, new trajectories, longer horizons, and uncertainty tests. In this project, small residuals and good in window fit were useful diagnostics, but neither was a certificate of the intended physical solution.'
+      },
+      items: [
+        {
+          id:'numerical', index:'01', kicker:'PINNs AS NUMERICAL METHODS',
+          label:'A PINN is a numerical method, not just a neural network.',
+          title:'The residual is only one part of the algorithm.',
+          copy:'My first conclusion is that a PINN should be analyzed as a coupled numerical method. Representation, sampling, boundary treatment, optimization, initialization, and resolution jointly determine which solution the optimizer can reach. Changing one ingredient in isolation was repeatedly insufficient.',
+          math:String.raw`\[
+          \text{PINN behavior}
+          =
+          \Phi(\text{representation},\text{sampling},\text{BCs},\text{optimization},\text{resolution}).
+          \]`,
+          conclusion:'Physics in the objective does not remove the need for numerical analysis.',
+          evidenceTitle:'The evidence came from failed single knob fixes.',
+          evidence:[
+            ['More points','8k → 16k interior points did not cleanly rescue frequency 20.'],
+            ['Representation','Changing Fourier bandwidth and aligning features with the wave cone did not produce a robust cure.'],
+            ['Sampling','Adaptive sampling concentrated about 98% of its mass near the source and still learned the wrong trajectory.']
+          ],
+          footer:'The lesson is not that these techniques are useless. The lesson is that success is a property of the whole numerical system.'
+        },
+        {
+          id:'optimization', index:'02', kicker:'OPTIMIZATION IS NOT VALIDATION',
+          label:'Low loss is not a certificate of correct physics.',
+          title:'A small objective can still describe the wrong solution.',
+          copy:'The experiments produced qualitatively different regimes under nearly identical nominal setups: accurate solutions, partial solutions, near zero collapse, and high energy wrong solutions. This means that optimization success must be separated from physical correctness.',
+          math:String.raw`\[
+          \mathcal L(\theta)\downarrow
+          \quad\not\Rightarrow\quad
+          u_\theta \approx u_{\mathrm{physical}}.
+          \]`,
+          conclusion:'The optimizer can become very effective at solving the wrong learning problem.',
+          evidenceTitle:'Seed dependence made the distinction visible.',
+          evidence:[
+            ['Frequency × seed map','The same architecture could succeed or collapse depending on seed and physical frequency.'],
+            ['Adaptive pathology','Large residual concentration did not imply globally useful information.'],
+            ['Reference audits','Solver and reference checks were much smaller than the model errors being diagnosed.']
+          ],
+          footer:'A residual or loss value is evidence about the objective. It is not a certificate of the intended physical field.'
+        },
+        {
+          id:'transfer', index:'03', kicker:'TRANSFER AS A SCIENTIFIC TEST',
+          label:'Transfer is a stronger scientific test than fit.',
+          title:'The best fit was not the best dynamics.',
+          copy:'The NeuSA experiments changed what I would use as the main model selection criterion. A highly expressive global model fit the training interval extremely well, yet a much smaller structured local law transferred far better to new initial conditions and longer horizons.',
+          math:String.raw`\[
+          \text{training fit}
+          \quad\not\Rightarrow\quad
+          \text{transferable dynamics}.
+          \]`,
+          conclusion:'For scientific learning, the central question is not how well the network interpolates. It is what law the network has actually learned.',
+          evidenceTitle:'The ranking changed outside the fitting trajectory.',
+          evidence:[
+            ['Model size','474,921 parameters in the global model versus 1,153 in the local structured law.'],
+            ['Structural ablation','The cubic model beat the free and odd alternatives on the held out comparisons.'],
+            ['Long horizon stress','The same structural advantage remained visible in the tail through T = 10.']
+          ],
+          footer:'Transfer turned architectural preference into a scientific question about the learned law.'
+        },
+        {
+          id:'validity', index:'04', kicker:'UNCERTAINTY REQUIRES MODEL VALIDITY',
+          label:'Parameter confidence is not model confidence.',
+          title:'A model can be locally certain and globally wrong.',
+          copy:'Fisher information improved sensor placement and parameter identification, but extrapolative confidence intervals became invalid when the surrogate itself was biased. This made one point especially clear: uncertainty about a parameter is not the same thing as uncertainty about the model that defines that parameter estimate.',
+          math:String.raw`\[
+          U_{\mathrm{data}},\qquad
+          U_{\mathrm{parameter}},\qquad
+          U_{\mathrm{model}}
+          \quad\text{must be distinguished.}
+          \]`,
+          conclusion:'Scientific uncertainty must include uncertainty about the validity of the surrogate itself.',
+          evidenceTitle:'The confidence failure was quantitative.',
+          evidence:[
+            ['Sensor design','Fisher placement improved identification using the same 12 observations.'],
+            ['Coverage failure','Nominal 90% local intervals reached 0% empirical coverage under extrapolation.'],
+            ['Discrepancy repair','Explicit model discrepancy raised far extrapolation Fisher coverage to 77.8%, with 83.3% at seed ensemble level.']
+          ],
+          footer:'High local information can coexist with an invalid surrogate. Precision is not the same thing as validity.'
+        }
+      ]
     },
-    transfer:{
-      kicker:'EVIDENCE CHAIN',
-      title:'In-window accuracy did not rank models by transfer.',
-      copy:'The global NeuSA correction fit the training interval extremely well, yet the small local cubic law dominated later-time and shifted-trajectory tests. Robustness experiments extended that gap into the tails through T=10.',
-      pills:['global fit ≠ transfer','cubic wins 9/9 vs odd','T=10 stress test']
-    },
-    structure:{
-      kicker:'EVIDENCE CHAIN',
-      title:'The correct prior changed compute efficiency.',
-      copy:'At equal 500-update budget, trajectory diversity worsened all paired comparisons. Extra compute later helped the partially structured odd model strongly, while the cubic model was already close to saturation.',
-      pills:['500-update fairness','odd improves with compute','cubic near saturation']
-    },
-    trust:{
-      kicker:'EVIDENCE CHAIN',
-      title:'High local information did not certify the surrogate.',
-      copy:'Fisher sensor design improved identification, yet extrapolative 90% local intervals reached 0% coverage. Adding model discrepancy repaired much of that failure on fresh coefficients.',
-      pills:['same 12 observations','0% naive coverage','far Fisher: 0%→77.8%']
+    future: {
+      quote:'The next frontier is not simply a larger PINN. It is a scientific model that can state what it learned, where that knowledge remains valid, and what evidence it needs next.',
+      directAnswer: {
+        label:'DIRECT ANSWER · QUESTION B',
+        title:'The question I would pursue next is whether a scientific surrogate can detect when it should no longer be trusted and decide what observation would make it trustworthy again.',
+        copy:'That would connect structural learning, inverse identification, model validity, and experimental design in one loop. The goal would be to learn only the missing physics, distinguish physical parameters from surrogate compensation, detect model invalidity before confidence becomes misleading, and choose the next measurement that reduces the right uncertainty.'
+      },
+      items: [
+        {
+          id:'missing', index:'01', kicker:'LEARN ONLY WHAT IS MISSING',
+          label:'Decide what should be imposed and what should be learned.',
+          title:'Impose what is known. Learn what is genuinely unknown.',
+          copy:'The structural experiments suggest a different design principle from simply increasing network capacity. I would decompose the dynamics into a trusted part and a learned correction, then ask which structural assumptions are necessary for transfer and which can be inferred from data.',
+          math:String.raw`\[
+          \dot z
+          =
+          F_{\mathrm{known}}(z,\mu)
+          +
+          G_\theta(z,\mu).
+          \]`,
+          conclusion:'The scientific problem becomes structure selection, not architecture inflation.',
+          evidenceTitle:'This direction follows directly from the structural experiments.',
+          evidence:[
+            ['Analytical linearization','Encoding known linear physics reduced mean training error by about 61.8%.'],
+            ['Local cubic law','A much smaller structured model transferred dramatically better than the global correction.'],
+            ['Compute frontier','Additional compute helped weaker priors, but did not erase the structural advantage.']
+          ],
+          footer:'The question I would ask is which pieces of the law should be exact, approximate, learned, or explicitly uncertain.'
+        },
+        {
+          id:'compensation', index:'02', kicker:'PHYSICAL PARAMETERS VS COMPENSATING PARAMETERS',
+          label:'Separate physical parameters from surrogate compensation.',
+          title:'An inferred parameter can be predictive without being physically correct.',
+          copy:'Once the surrogate is imperfect, an inverse problem can estimate a parameter that compensates for model error. I would explicitly separate physical identification from predictive calibration instead of assuming they coincide.',
+          math:String.raw`\[
+          \mu^{\dagger}_{\mathrm{obs}}
+          \neq
+          \mu^{\dagger}_{\mathrm{forecast}}
+          \neq
+          \mu_{\mathrm{true}}
+          \quad\text{can occur under misspecification.}
+          \]`,
+          conclusion:'A useful inverse estimate should explain whether it is identifying physics or compensating for the surrogate.',
+          evidenceTitle:'Phase 8 exposed the mechanism directly.',
+          evidence:[
+            ['Fresh extrapolation','The discrepancy correction often moved the parameter estimate closer to the physical value.'],
+            ['Pseudo true sweep','Upper extrapolation showed a forecast optimal parameter shifted toward the training range.'],
+            ['Mechanism cases','Two near extrapolation cases showed better parameter recovery but worse forecast after correction.']
+          ],
+          footer:'This is where inverse problems and model discrepancy become the same scientific question.'
+        },
+        {
+          id:'validity-detect', index:'03', kicker:'VALIDITY BEFORE CONFIDENCE',
+          label:'Detect model invalidity before confidence becomes misleading.',
+          title:'Uncertainty should answer whether the model is still admissible.',
+          copy:'I would move beyond reporting a parameter interval and build a validity diagnostic that combines model disagreement, state occupancy, residual information, force law discrepancy, and sensitivity. The aim is to detect extrapolation failure before a narrow interval becomes misleading.',
+          math:String.raw`\[
+          \mathcal V(x,t,\mu)
+          =
+          \Psi\!\left(
+          \text{occupancy},\text{ensemble disagreement},\text{discrepancy},\text{sensitivity}
+          \right).
+          \]`,
+          conclusion:'The model should report not only how uncertain it is, but whether its own representation remains trustworthy.',
+          evidenceTitle:'The UQ experiments make this question unavoidable.',
+          evidence:[
+            ['Local Fisher UQ','Narrow extrapolative intervals had catastrophic undercoverage.'],
+            ['Occupancy diagnostics','Force error on occupied states tracked transfer better than global force error in the useful regime.'],
+            ['Discrepancy aware UQ','Explicit model discrepancy repaired much of the failure on fresh coefficients.']
+          ],
+          footer:'The object to estimate is not only uncertainty. It is the boundary of model validity.'
+        },
+        {
+          id:'next-observation', index:'04', kicker:'CLOSE THE LOOP WITH EXPERIMENTAL DESIGN',
+          label:'Let the model identify the next informative observation.',
+          title:'Prediction should become an active scientific loop.',
+          copy:'The natural next step after calibration and validity detection is adaptive measurement design. I would ask the model which observation would most reduce uncertainty about the physical law while remaining inside a region where the surrogate is itself credible.',
+          math:String.raw`\[
+          a^*
+          =
+          \arg\max_{a\in\mathcal D_{\mathrm{trust}}}
+          I\!\left(
+          \text{physical law};y_a\mid\text{current surrogate}
+          \right).
+          \]`,
+          conclusion:'The model should not only predict. It should tell us what to measure next and why.',
+          evidenceTitle:'We already saw the first piece of this loop.',
+          evidence:[
+            ['Fisher sensor design','Sensor placement improved parameter identification without increasing the observation count.'],
+            ['Validity failure','The same local information criterion could still be overconfident outside model support.'],
+            ['Next step','Measurement design should account jointly for information gain and model validity.']
+          ],
+          footer:'That would turn the surrogate from a passive predictor into a participant in experimental design.'
+        }
+      ]
     }
   };
-  qsa('.belief').forEach(b=>b.onclick=()=>{
-    qsa('.belief').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-    const e=beliefEvidence[b.dataset.belief],box=qs('#belief-evidence');
-    box.innerHTML=`<span class="evidence-kicker">${e.kicker}</span><h3>${e.title}</h3><p>${e.copy}</p><div class="evidence-pills">${e.pills.map(x=>`<span>${x}</span>`).join('')}</div>`;
-  });
-  qs('#slide-focus')?.addEventListener('click',()=>{
-    const s=qs('#synthesis');
-    if(!document.body.classList.contains('stage-mode')) toggleStage(true);
-    const idx=sections.findIndex(x=>x===s); if(idx>=0)setStage(idx);
-  });
 
+  let synthesisQuestion='conclusions';
+  let synthesisIndex=0;
+
+  function renderSynthesis(){
+    const group=synthesisData[synthesisQuestion];
+    const item=group.items[synthesisIndex] || group.items[0];
+    const rail=qs('#position-rail');
+    rail.innerHTML=group.items.map((x,i)=>`<button class="position-rail-item ${i===synthesisIndex?'active':''}" data-position-index="${i}"><span>${x.index}</span><div><strong>${x.label}</strong><small>${x.kicker}</small></div></button>`).join('');
+    qsa('.position-rail-item',rail).forEach(b=>b.onclick=()=>{synthesisIndex=Number(b.dataset.positionIndex);renderSynthesis();});
+
+    qs('#position-kicker').textContent=item.kicker;
+    qs('#position-index').textContent=item.index;
+    qs('#position-title').textContent=item.title;
+    qs('#position-copy').textContent=item.copy;
+    qs('#position-math').innerHTML=item.math;
+    qs('#position-conclusion').textContent=item.conclusion;
+    qs('#position-evidence-title').textContent=item.evidenceTitle;
+    qs('#position-evidence-list').innerHTML=item.evidence.map(([k,v])=>`<article><span>${k}</span><p>${v}</p></article>`).join('');
+    qs('#position-evidence-footer').textContent=item.footer;
+    qs('#synthesis-thesis-label').textContent=group.directAnswer?.label || '';
+    qs('#synthesis-thesis-title').textContent=group.directAnswer?.title || group.quote;
+    qs('#synthesis-thesis-copy').textContent=group.directAnswer?.copy || '';
+    qs('#synthesis-final-quote').textContent=group.quote;
+
+    if(window.MathJax?.typesetPromise){
+      window.MathJax.typesetPromise([qs('#synthesis')]).catch(()=>{});
+    }
+  }
+
+  qsa('.question-switch').forEach(b=>b.onclick=()=>{
+    qsa('.question-switch').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-selected','false')});
+    b.classList.add('active'); b.setAttribute('aria-selected','true');
+    synthesisQuestion=b.dataset.question;
+    synthesisIndex=0;
+    renderSynthesis();
+  });
+  renderSynthesis();
   // -------------------------------------------------------------
   // Protocol drawer
   // -------------------------------------------------------------
@@ -658,40 +1068,6 @@
   }
   qs('#protocol-close')?.addEventListener('click',closeDrawer);
   qs('#protocol-scrim')?.addEventListener('click',closeDrawer);
-
-  // -------------------------------------------------------------
-  // Results dashboard
-  // -------------------------------------------------------------
-  const results=window.SCIML_RESULTS;
-  const caseSelect=qs('#result-case');
-  results.cases.forEach(([id,label])=>{const o=document.createElement('option');o.value=id;o.textContent=label;caseSelect.appendChild(o)});caseSelect.value=state.resultCase;
-  qs('#interval-buttons').innerHTML=results.intervals.map(i=>`<button data-interval="${i}" class="${i===state.interval?'active':''}">${results.intervalLabels[i]}</button>`).join('');
-  qs('#result-note').textContent=results.meta.note;
-  caseSelect.onchange=e=>{state.resultCase=e.target.value;renderResults()};
-  qsa('#interval-buttons button').forEach(b=>b.onclick=()=>{qsa('#interval-buttons button').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.interval=b.dataset.interval;renderResults()});
-  qsa('[data-metric]').forEach(b=>b.onclick=()=>{qsa('[data-metric]').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.metric=b.dataset.metric;renderResults()});
-  const modelMap=Object.fromEntries(results.models.map(x=>[x[0],{label:x[1],color:x[2]}]));
-  function modelRows(){return results.rows.filter(r=>r[0]===state.resultCase).map(r=>({case:r[0],model:r[1],seed:r[2],v:{'0_1':r[3],'1_3':r[4],'3_5':r[5]}[state.interval],energy:r[6]}))}
-  function fmt(v){if(v<.01)return v.toFixed(4)+'%';if(v<1)return v.toFixed(3)+'%';return v.toFixed(2)+'%'}
-  function renderResults(){
-    const rows=modelRows(), values=rows.map(r=>state.metric==='error'?r.v:r.energy);const positive=values.filter(v=>v>0),min=Math.max(Math.min(...positive)*.62,.0003),max=Math.max(...values)*1.55;
-    qs('#viz-title').textContent=state.metric==='error'?`${caseSelect.selectedOptions[0].text} · ${results.intervalLabels[state.interval]}`:`Energy drift · ${caseSelect.selectedOptions[0].text}`;
-    qs('#viz-legend').innerHTML=results.models.map(([id,label,color])=>`<span><i style="background:${color}"></i>${label}</span>`).join('');
-    const svg=qs('#result-chart');svg.innerHTML='';const W=900,H=500,L=170,R=45,T=55,B=65,plotW=W-L-R,plotH=H-T-B;
-    const useLog=state.metric==='error' && max/min>30; const sx=v=>useLog?L+(Math.log10(v)-Math.log10(min))/(Math.log10(max)-Math.log10(min))*plotW:L+(v-min)/(max-min)*plotW;
-    const yBase={global:T+plotH*.2,free:T+plotH*.5,cubic:T+plotH*.8};
-    const gridVals=useLog?[.001,.01,.1,1,10,100].filter(v=>v>=min&&v<=max):Array.from({length:5},(_,i)=>min+(max-min)*i/4);
-    gridVals.forEach(v=>{const x=sx(v),line=sEl('line',{x1:x,y1:T,x2:x,y2:T+plotH,class:'chart-grid'});svg.appendChild(line);const tx=sEl('text',{x,y:H-33,class:'chart-label','text-anchor':'middle'});tx.textContent=fmt(v);svg.appendChild(tx)});
-    results.models.forEach(([id,label,color])=>{const y=yBase[id],lab=sEl('text',{x:L-18,y:y+4,class:'chart-label','text-anchor':'end'});lab.textContent=label;svg.appendChild(lab);const modelVals=rows.filter(r=>r.model===id).map(r=>state.metric==='error'?r.v:r.energy),mean=modelVals.reduce((a,b)=>a+b,0)/modelVals.length;const m=sEl('line',{x1:sx(mean),y1:y-28,x2:sx(mean),y2:y+28,stroke:color,class:'chart-mean'});svg.appendChild(m)});
-    rows.forEach((r,i)=>{const val=state.metric==='error'?r.v:r.energy,y=yBase[r.model]+(r.seed-43)*16,c=sEl('circle',{cx:sx(val),cy:y,r:7,fill:modelMap[r.model].color,class:'chart-point',stroke:'#07111d','stroke-width':'2','data-value':val,'data-seed':r.seed,'data-model':modelMap[r.model].label});c.style.color=modelMap[r.model].color;c.addEventListener('pointerenter',ev=>showTooltip(ev,`${modelMap[r.model].label}<br>seed ${r.seed} · <b>${fmt(val)}</b>`));c.addEventListener('pointerleave',hideTooltip);svg.appendChild(c)});
-    const axis=sEl('line',{x1:L,y1:T+plotH,x2:W-R,y2:T+plotH,class:'chart-axis'});svg.appendChild(axis);
-    const summary=results.models.map(([id,label])=>{const v=rows.filter(r=>r.model===id).map(r=>state.metric==='error'?r.v:r.energy),mean=v.reduce((a,b)=>a+b,0)/v.length;return [label,mean]}).sort((a,b)=>a[1]-b[1]);
-    qs('#result-summary').innerHTML=summary.map(([l,m],i)=>`<div class="summary-row"><span>${i===0?'best · ':''}${l}</span><strong>${fmt(m)}</strong></div>`).join('');
-    if(state.resultCase==='original'&&state.interval==='3_5'&&state.metric==='error'){qs('#callout-number').textContent='30×';qs('#callout-title').textContent='The best fit did not transfer best.';qs('#callout-copy').textContent='The global model fit [0,1] far more accurately, yet the structured local model had about thirty times lower mean error on (3,5].';}
-    else if(state.metric==='error'){const ratio=summary[summary.length-1][1]/summary[0][1];qs('#callout-number').textContent=`${ratio.toFixed(ratio>10?0:1)}×`;qs('#callout-title').textContent='Structure changes the ranking.';qs('#callout-copy').textContent=`For this view, ${summary[0][0]} has the lowest mean error across the three recorded seeds.`;}
-    else{qs('#callout-number').textContent=fmt(summary[0][1]);qs('#callout-title').textContent='Energy is a diagnostic, not a certificate.';qs('#callout-copy').textContent='A trajectory may conserve a global quantity reasonably well and still have substantial phase or field error.';}
-  }
-  function showTooltip(e,html){const t=qs('#tooltip');t.innerHTML=html;t.style.left=e.clientX+'px';t.style.top=e.clientY+'px';t.classList.add('visible')};function hideTooltip(){qs('#tooltip').classList.remove('visible')};renderResults();
 
   // -------------------------------------------------------------
   // Presenter mode
@@ -839,4 +1215,231 @@
   resize();
   draw(0);
   if(!reduceMotion) requestAnimationFrame(frame);
+})();
+
+
+// -------------------------------------------------------------
+// Experiment atlas ambient background — interactive only as decoration
+// -------------------------------------------------------------
+(() => {
+  const canvas = document.querySelector('#atlas-bg-canvas');
+  const section = document.querySelector('#experiments');
+  if(!canvas || !section) return;
+  const g = canvas.getContext('2d');
+  let W=0,H=0,dpr=1,raf=0;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mouse = {x:-9999,y:-9999,inside:false};
+  let t0 = 0;
+
+  const nodes = Array.from({length:26}, (_,i)=>( {
+    x:.08 + Math.random()*.84,
+    y:.08 + Math.random()*.84,
+    vx:(Math.random()-.5)*.00012,
+    vy:(Math.random()-.5)*.00012,
+    r:1.8 + Math.random()*3.6,
+    tone:i%3===0 ? [88,217,255] : i%3===1 ? [124,167,255] : [76,225,182],
+    phase:Math.random()*Math.PI*2
+  }));
+  const pulses = Array.from({length:18}, (_,i)=>({
+    edge:[Math.floor(Math.random()*nodes.length), Math.floor(Math.random()*nodes.length)],
+    u:Math.random(),
+    speed:.00008 + Math.random()*.00009,
+    phase:i*.41
+  })).filter(p=>p.edge[0]!==p.edge[1]);
+
+  function resize(){
+    const r = section.getBoundingClientRect();
+    W = Math.max(1, Math.floor(r.width));
+    H = Math.max(1, Math.floor(section.offsetHeight));
+    dpr = Math.min(devicePixelRatio || 1, 1.8);
+    canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    g.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function sectionCoords(evt){
+    const r = section.getBoundingClientRect();
+    mouse.x = evt.clientX - r.left; mouse.y = evt.clientY - r.top;
+  }
+
+  section.addEventListener('pointermove', evt => { mouse.inside = true; sectionCoords(evt); });
+  section.addEventListener('pointerenter', evt => { mouse.inside = true; sectionCoords(evt); });
+  section.addEventListener('pointerleave', () => { mouse.inside = false; mouse.x = -9999; mouse.y = -9999; });
+  addEventListener('resize', resize);
+
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  function draw(ms){
+    if(!t0) t0 = ms;
+    const time = ms - t0;
+    g.clearRect(0,0,W,H);
+
+    const sky = g.createLinearGradient(0,0,W,H);
+    sky.addColorStop(0,'rgba(11,24,40,0.14)');
+    sky.addColorStop(.55,'rgba(11,24,40,0.03)');
+    sky.addColorStop(1,'rgba(11,24,40,0.16)');
+    g.fillStyle = sky; g.fillRect(0,0,W,H);
+
+    // slow flowing wave ribbons
+    for(let band=0; band<4; band++){
+      g.beginPath();
+      for(let i=0;i<=140;i++){
+        const u = i/140;
+        const x = u*W;
+        const y = H*(.18 + band*.18) + Math.sin(u*7.8 + time*.00028 + band)*18 + Math.cos(u*4.4 - time*.00019)*8;
+        i ? g.lineTo(x,y) : g.moveTo(x,y);
+      }
+      g.strokeStyle = band%2===0 ? 'rgba(88,217,255,.08)' : 'rgba(124,167,255,.06)';
+      g.lineWidth = band===2 ? 1.2 : .9;
+      g.stroke();
+    }
+
+    // update and render premium node field
+    const pts = nodes.map(n => {
+      n.x += n.vx * time * .015; n.y += n.vy * time * .015;
+      if(n.x < .04 || n.x > .96) n.vx *= -1;
+      if(n.y < .05 || n.y > .95) n.vy *= -1;
+      const x = n.x * W, y = n.y * H;
+      return {n,x,y};
+    });
+
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const a = pts[i], b = pts[j];
+        const d = Math.hypot(a.x-b.x, a.y-b.y);
+        if(d < 180){
+          const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+          const mouseBoost = mouse.inside ? Math.max(0, 1 - Math.hypot(mx-mouse.x, my-mouse.y)/220) : 0;
+          const alpha = (.11*(1-d/180)) + mouseBoost*.12;
+          g.strokeStyle = `rgba(122,176,225,${alpha})`;
+          g.lineWidth = mouseBoost > 0 ? 1.15 : .75;
+          g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+        }
+      }
+    }
+
+    pulses.forEach((p,k)=>{
+      const a = pts[p.edge[0]], b = pts[p.edge[1]]; if(!a||!b) return;
+      p.u = (p.u + p.speed * (reduceMotion ? .12 : 1.0) * time * .06) % 1;
+      const x = lerp(a.x,b.x,p.u), y = lerp(a.y,b.y,p.u);
+      const alpha = .22 + .28 * (.5 + .5*Math.sin(time*.004 + p.phase));
+      const grad = g.createRadialGradient(x,y,0,x,y,12);
+      grad.addColorStop(0, `rgba(190,236,255,${alpha})`);
+      grad.addColorStop(.35, `rgba(88,217,255,${alpha*.45})`);
+      grad.addColorStop(1, 'rgba(88,217,255,0)');
+      g.fillStyle = grad; g.beginPath(); g.arc(x,y,12,0,Math.PI*2); g.fill();
+    });
+
+    pts.forEach(({n,x,y},i)=>{
+      const [r,gg,b] = n.tone;
+      const hover = mouse.inside ? Math.max(0, 1 - Math.hypot(x-mouse.x,y-mouse.y)/180) : 0;
+      const pulse = .5 + .5*Math.sin(time*.0022 + n.phase);
+      const rad = n.r + pulse*1.4 + hover*1.2;
+      const glow = g.createRadialGradient(x,y,0,x,y,rad*5);
+      glow.addColorStop(0, `rgba(${r},${gg},${b},${.18 + hover*.10})`);
+      glow.addColorStop(.22, `rgba(${r},${gg},${b},${.08 + hover*.05})`);
+      glow.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+      g.fillStyle = glow; g.beginPath(); g.arc(x,y,rad*5,0,Math.PI*2); g.fill();
+      g.fillStyle = `rgba(${r},${gg},${b},${.68 + hover*.18})`;
+      g.beginPath(); g.arc(x,y,rad,0,Math.PI*2); g.fill();
+      g.fillStyle = 'rgba(245,250,255,.95)'; g.beginPath(); g.arc(x,y,Math.max(0.8,rad*.22),0,Math.PI*2); g.fill();
+    });
+
+    // subtle focus halo under the cards area
+    const halo = g.createRadialGradient(W*.5,H*.58,0,W*.5,H*.58,Math.max(W,H)*.42);
+    halo.addColorStop(0,'rgba(90,160,255,.06)');
+    halo.addColorStop(.45,'rgba(88,217,255,.03)');
+    halo.addColorStop(1,'rgba(0,0,0,0)');
+    g.fillStyle = halo; g.fillRect(0,0,W,H);
+
+    raf = requestAnimationFrame(draw);
+  }
+
+  resize();
+  if(!reduceMotion) raf = requestAnimationFrame(draw); else draw(0);
+})();
+
+// -------------------------------------------------------------
+// Final synthesis ambient field — decorative, pointer reactive
+// -------------------------------------------------------------
+(() => {
+  const canvas = document.querySelector('#synthesis-bg-canvas');
+  const section = document.querySelector('#synthesis');
+  if(!canvas || !section) return;
+  const g = canvas.getContext('2d');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W=0,H=0,dpr=1;
+  const pointer={x:-9999,y:-9999,inside:false};
+  const stars=Array.from({length:44},(_,i)=>({
+    x:Math.random(),y:Math.random(),r:.7+Math.random()*1.8,
+    phase:Math.random()*Math.PI*2,
+    tone:i%3
+  }));
+
+  function resize(){
+    const r=section.getBoundingClientRect();
+    W=Math.max(1,Math.floor(r.width));
+    H=Math.max(1,Math.floor(section.offsetHeight));
+    dpr=Math.min(devicePixelRatio||1,1.7);
+    canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);
+    canvas.style.width=W+'px';canvas.style.height=H+'px';
+    g.setTransform(dpr,0,0,dpr,0,0);
+  }
+  section.addEventListener('pointermove',e=>{const r=section.getBoundingClientRect();pointer.x=e.clientX-r.left;pointer.y=e.clientY-r.top;pointer.inside=true});
+  section.addEventListener('pointerleave',()=>{pointer.inside=false;pointer.x=-9999;pointer.y=-9999});
+  addEventListener('resize',resize,{passive:true});
+
+  function wave(time,base,amp,freq,color,alpha,phase){
+    g.beginPath();
+    for(let x=-20;x<=W+20;x+=12){
+      const u=x/W;
+      const y=H*base+Math.sin(u*Math.PI*2*freq+time*.00025+phase)*amp+Math.cos(u*Math.PI*4.3-time*.00016)*amp*.22;
+      x===-20?g.moveTo(x,y):g.lineTo(x,y);
+    }
+    g.strokeStyle=`rgba(${color},${alpha})`;g.lineWidth=1;g.stroke();
+  }
+
+  function draw(t){
+    g.clearRect(0,0,W,H);
+    wave(t,.22,28,1.2,'88,217,255',.10,.4);
+    wave(t,.56,42,1.0,'124,167,255',.075,2.0);
+    wave(t,.82,30,1.45,'76,225,182',.085,4.1);
+
+    const pts=stars.map((s,i)=>{
+      const x=(s.x+Math.sin(t*.00008+s.phase)*.015)*W;
+      const y=(s.y+Math.cos(t*.00007+s.phase)*.012)*H;
+      return {s,x,y};
+    });
+
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const a=pts[i],b=pts[j];
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<145){
+          const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+          const boost=pointer.inside?Math.max(0,1-Math.hypot(mx-pointer.x,my-pointer.y)/210):0;
+          g.strokeStyle=`rgba(117,170,221,${.024*(1-d/145)+boost*.055})`;
+          g.lineWidth=.6+boost*.45;
+          g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke();
+        }
+      }
+    }
+
+    pts.forEach(({s,x,y})=>{
+      const palette=s.tone===0?[88,217,255]:s.tone===1?[124,167,255]:[76,225,182];
+      const hover=pointer.inside?Math.max(0,1-Math.hypot(x-pointer.x,y-pointer.y)/170):0;
+      const pulse=.5+.5*Math.sin(t*.0018+s.phase);
+      const r=s.r+pulse*.8+hover*.9;
+      const grad=g.createRadialGradient(x,y,0,x,y,r*5);
+      grad.addColorStop(0,`rgba(${palette[0]},${palette[1]},${palette[2]},${.18+hover*.1})`);
+      grad.addColorStop(.3,`rgba(${palette[0]},${palette[1]},${palette[2]},${.07+hover*.04})`);
+      grad.addColorStop(1,`rgba(${palette[0]},${palette[1]},${palette[2]},0)`);
+      g.fillStyle=grad;g.beginPath();g.arc(x,y,r*5,0,Math.PI*2);g.fill();
+      g.fillStyle=`rgba(${palette[0]},${palette[1]},${palette[2]},${.58+hover*.2})`;g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fill();
+    });
+
+    if(!reduceMotion) requestAnimationFrame(draw);
+  }
+  resize();
+  if(reduceMotion) draw(0); else requestAnimationFrame(draw);
 })();

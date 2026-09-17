@@ -1,0 +1,178 @@
+{
+  "status": "completed",
+  "scope": "Variante propia del adaptador, T=1. No comparación con tabla oficial.",
+  "modes": 201,
+  "steps": 500,
+  "width": 516,
+  "nt": 129,
+  "T": 1,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "primary_metric": "relative L2 at h/2 vs common ref519",
+  "common_reference_verified": true,
+  "rows": [
+    {
+      "variant": "base",
+      "seed": 42,
+      "error_h": 0.00018216259469705843,
+      "error_h2": 0.00018246518581591567,
+      "same_M_error_h": 0.00018221318288387598,
+      "reference_M_vs_ref519": 2.6332937801401528e-06,
+      "final_loss": 5.959380359854549e-05,
+      "initial_loss": 6.350266456604004,
+      "training_seconds": 196.78473270199902,
+      "parameters": 474921,
+      "reused": true,
+      "checkpoint_sha256": "c5064cbba8c24020b3f549ed2d9079f5df4fd5a72324de4e18c9b0757958057e"
+    },
+    {
+      "variant": "linealizada",
+      "seed": 42,
+      "error_h": 6.41498613945476e-05,
+      "error_h2": 6.333981228270408e-05,
+      "same_M_error_h": 6.406081246867966e-05,
+      "reference_M_vs_ref519": 2.6332937801401528e-06,
+      "final_loss": 5.262920240056701e-05,
+      "initial_loss": 3.42541241645813,
+      "training_seconds": 214.54369379700074,
+      "parameters": 474921,
+      "reused": false,
+      "checkpoint_sha256": "df6e68988e39eb57e67134f81fad7194f7266bda803fa9657bacf6dcb675eb70"
+    },
+    {
+      "variant": "base",
+      "seed": 43,
+      "error_h": 0.00014557604894032604,
+      "error_h2": 0.00014593961611606345,
+      "same_M_error_h": 0.00014575143417302667,
+      "reference_M_vs_ref519": 2.6332937801401528e-06,
+      "final_loss": 5.815385884488933e-05,
+      "initial_loss": 6.339272499084473,
+      "training_seconds": 207.03296137800135,
+      "parameters": 474921,
+      "reused": false,
+      "checkpoint_sha256": "eaffba6e6687ad181c5f564d7bb85e61f4c57e43a4c6caa994345c5ed9929c77"
+    },
+    {
+      "variant": "linealizada",
+      "seed": 43,
+      "error_h": 5.143628197800721e-05,
+      "error_h2": 4.986903363662502e-05,
+      "same_M_error_h": 5.147250029605792e-05,
+      "reference_M_vs_ref519": 2.6332937801401528e-06,
+      "final_loss": 4.6334138460224494e-05,
+      "initial_loss": 3.425370931625366,
+      "training_seconds": 207.05210657400312,
+      "parameters": 474921,
+      "reused": false,
+      "checkpoint_sha256": "40a20fdca84fa2807a6c2858936e2d3f2383c0ddd0eb4786f6e5d4e85e23f3b6"
+    },
+    {
+      "variant": "base",
+      "seed": 44,
+      "error_h": 4.874582351555586e-05,
+      "error_h2": 4.783451736930044e-05,
+      "same_M_error_h": 4.885471735748068e-05,
+      "reference_M_vs_ref519": 2.6332937801401528e-06,
+      "final_loss": 5.6243810831801966e-05,
+      "initial_loss": 6.338671684265137,
+      "training_seconds": 196.74776325799758,
+      "parameters": 474921,
+      "reused": false,
+      "checkpoint_sha256": "befb603519d8ed8b899c33ef1984ee25c97a1a9fee2722580cc5caf65c0f7f04"
+    },
+    {
+      "variant": "linealizada",
+      "seed": 44,
+      "error_h": 3.33484610615536e-05,
+      "error_h2": 3.040898239222305e-05,
+      "same_M_error_h": 3.325388109268033e-05,
+      "reference_M_vs_ref519": 2.6332937801401528e-06,
+      "final_loss": 4.3361571442801505e-05,
+      "initial_loss": 3.4197967052459717,
+      "training_seconds": 205.86182896699756,
+      "parameters": 474921,
+      "reused": false,
+      "checkpoint_sha256": "014fa2f975e783e7ffba059eb98a8dfe5d4ac961bf03c0e3460ccdb08f4e6971"
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "seed": 42,
+      "error_base_h2": 0.00018246518581591567,
+      "error_variant_h2": 6.333981228270408e-05,
+      "variant_over_base_error_ratio": 0.3471336847052344,
+      "relative_error_reduction_percent": 65.28663152947655,
+      "variant_over_base_training_seconds": 1.0902456245012413
+    },
+    {
+      "seed": 43,
+      "error_base_h2": 0.00014593961611606345,
+      "error_variant_h2": 4.986903363662502e-05,
+      "variant_over_base_error_ratio": 0.3417100507991262,
+      "relative_error_reduction_percent": 65.82899492008738,
+      "variant_over_base_training_seconds": 1.0000924741445727
+    },
+    {
+      "seed": 44,
+      "error_base_h2": 4.783451736930044e-05,
+      "error_variant_h2": 3.040898239222305e-05,
+      "variant_over_base_error_ratio": 0.6357121188754615,
+      "relative_error_reduction_percent": 36.428788112453844,
+      "variant_over_base_training_seconds": 1.046323605199255
+    }
+  ],
+  "aggregates": {
+    "base": {
+      "error_h": {
+        "mean": 0.00012549482238431343,
+        "sample_std": 6.893801892366637e-05,
+        "min": 4.874582351555586e-05,
+        "max": 0.00018216259469705843
+      },
+      "error_h2": {
+        "mean": 0.00012541310643375984,
+        "sample_std": 6.96229661921904e-05,
+        "min": 4.783451736930044e-05,
+        "max": 0.00018246518581591567
+      },
+      "training_seconds": {
+        "mean": 200.18848577933264,
+        "sample_std": 5.927518566021187,
+        "min": 196.74776325799758,
+        "max": 207.03296137800135
+      }
+    },
+    "linealizada": {
+      "error_h": {
+        "mean": 4.96448681447028e-05,
+        "sample_std": 1.5478644587300155e-05,
+        "min": 3.33484610615536e-05,
+        "max": 6.41498613945476e-05
+      },
+      "error_h2": {
+        "mean": 4.787260943718405e-05,
+        "sample_std": 1.6555940671161966e-05,
+        "min": 3.040898239222305e-05,
+        "max": 6.333981228270408e-05
+      },
+      "training_seconds": {
+        "mean": 209.15254311266713,
+        "sample_std": 4.706651619923415,
+        "min": 205.86182896699756,
+        "max": 214.54369379700074
+      }
+    }
+  },
+  "caveats": [
+    "Tres semillas ofrecen evidencia preliminar, no superioridad general.",
+    "La variante cambia la parte analítica y la trayectoria inicial, no la PDE ni la red.",
+    "Más información lineal no garantiza menor error para este pulso de amplitud ~3.99.",
+    "h/2 es reevaluación con pesos fijos, no entrenamiento con paso menor.",
+    "La curva linear en fields.npz sigue siendo la onda sin -10u y no la inicialización analítica de la variante.",
+    "Estos resultados todavía no miden extrapolación ni conservación de energía."
+  ]
+}

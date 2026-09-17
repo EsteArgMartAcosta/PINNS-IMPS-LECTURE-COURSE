@@ -1,0 +1,164 @@
+{
+  "status": "completed",
+  "study": "NeuSA force-identification mechanism across compute budgets",
+  "aggregate": {
+    "local_libre": {
+      "500": {
+        "trajectory_error_1_3_mean_percent": 8.310389393043208,
+        "trajectory_error_1_3_sd_percent": 0.6287475482777664,
+        "occupancy_force_error_mean": 0.0929632849660809,
+        "occupancy_force_error_sd": 0.02536309272493689,
+        "global_force_error_mean": 3.0219806412279304,
+        "global_force_error_sd_across_seeds": 0.008148836240946929
+      },
+      "1000": {
+        "trajectory_error_1_3_mean_percent": 7.501375223555662,
+        "trajectory_error_1_3_sd_percent": 0.7296780146988316,
+        "occupancy_force_error_mean": 0.08879765484704805,
+        "occupancy_force_error_sd": 0.02739256931102056,
+        "global_force_error_mean": 3.01443310450313,
+        "global_force_error_sd_across_seeds": 0.0066194271656567
+      },
+      "1500": {
+        "trajectory_error_1_3_mean_percent": 7.2821672264458615,
+        "trajectory_error_1_3_sd_percent": 0.7671128725396898,
+        "occupancy_force_error_mean": 0.08502830402926263,
+        "occupancy_force_error_sd": 0.026547553921721055,
+        "global_force_error_mean": 2.985018809188574,
+        "global_force_error_sd_across_seeds": 0.04213750203592417
+      }
+    },
+    "local_odd": {
+      "500": {
+        "trajectory_error_1_3_mean_percent": 6.15349216569597,
+        "trajectory_error_1_3_sd_percent": 2.9152246802506943,
+        "occupancy_force_error_mean": 0.0383947478693815,
+        "occupancy_force_error_sd": 0.016115445994899443,
+        "global_force_error_mean": 0.4274939337614492,
+        "global_force_error_sd_across_seeds": 0.07587825348400933
+      },
+      "1000": {
+        "trajectory_error_1_3_mean_percent": 3.062446135327693,
+        "trajectory_error_1_3_sd_percent": 1.6150298312169191,
+        "occupancy_force_error_mean": 0.021253370088655178,
+        "occupancy_force_error_sd": 0.010101051365745307,
+        "global_force_error_mean": 0.306033990244916,
+        "global_force_error_sd_across_seeds": 0.02529399532296967
+      },
+      "1500": {
+        "trajectory_error_1_3_mean_percent": 2.3809063177004877,
+        "trajectory_error_1_3_sd_percent": 1.399376470097045,
+        "occupancy_force_error_mean": 0.017058973088386158,
+        "occupancy_force_error_sd": 0.009267882836771034,
+        "global_force_error_mean": 0.2746283074969575,
+        "global_force_error_sd_across_seeds": 0.026454242872538947
+      }
+    },
+    "local_cubica": {
+      "500": {
+        "trajectory_error_1_3_mean_percent": 0.5803723763969524,
+        "trajectory_error_1_3_sd_percent": 0.07453510158971642,
+        "occupancy_force_error_mean": 0.004872066617075999,
+        "occupancy_force_error_sd": 0.0011022069242384751,
+        "global_force_error_mean": 0.41620750981501325,
+        "global_force_error_sd_across_seeds": 0.005009125172915643
+      },
+      "1000": {
+        "trajectory_error_1_3_mean_percent": 0.5758613568626835,
+        "trajectory_error_1_3_sd_percent": 0.0721799036385898,
+        "occupancy_force_error_mean": 0.004819868451409772,
+        "occupancy_force_error_sd": 0.001093303827077191,
+        "global_force_error_mean": 0.4111943769128725,
+        "global_force_error_sd_across_seeds": 0.004496948614968318
+      },
+      "1500": {
+        "trajectory_error_1_3_mean_percent": 0.5669150061637522,
+        "trajectory_error_1_3_sd_percent": 0.0706042274747079,
+        "occupancy_force_error_mean": 0.004742674401739672,
+        "occupancy_force_error_sd": 0.0010825345475307872,
+        "global_force_error_mean": 0.40707488384014884,
+        "global_force_error_sd_across_seeds": 0.004419582443240701
+      }
+    }
+  },
+  "budget_changes_500_to_1500": {
+    "local_libre": {
+      "trajectory_1500_over_500": 0.8762726849528746,
+      "occupancy_force_1500_over_500": 0.9146439270114705,
+      "global_force_1500_over_500": 0.987769004362537
+    },
+    "local_odd": {
+      "trajectory_1500_over_500": 0.3869195334274393,
+      "occupancy_force_1500_over_500": 0.4443048603007003,
+      "global_force_1500_over_500": 0.642414513536012
+    },
+    "local_cubica": {
+      "trajectory_1500_over_500": 0.9768125245437322,
+      "occupancy_force_1500_over_500": 0.9734420266580872,
+      "global_force_1500_over_500": 0.978057517561556
+    }
+  },
+  "descriptive_log_correlations": {
+    "all": {
+      "log_occ_force_vs_log_traj": 0.9745739066035068,
+      "log_global_force_vs_log_traj": 0.68211862362076
+    },
+    "local_libre": {
+      "n": 27,
+      "log_occ_force_vs_log_traj": 0.6740735403994074,
+      "log_global_force_vs_log_traj": 0.25974934940604355
+    },
+    "local_odd": {
+      "n": 27,
+      "log_occ_force_vs_log_traj": 0.9972709560822937,
+      "log_global_force_vs_log_traj": 0.5991296578323134
+    },
+    "local_cubica": {
+      "n": 27,
+      "log_occ_force_vs_log_traj": -0.5513324528732577,
+      "log_global_force_vs_log_traj": 0.12014439823168052
+    }
+  },
+  "occupancy_summary": {
+    "estrecho_desplazado": {
+      "n": 328833,
+      "min": -1.9748897431783674,
+      "q01": -1.1182331692393803,
+      "q05": -0.4864735297320867,
+      "median": 1.0793955387085124e-12,
+      "q95": 0.45155409767857896,
+      "q99": 1.193890586156215,
+      "max": 3.985449354806094,
+      "rms": 0.32581226915303824
+    },
+    "doble_asimetrico": {
+      "n": 328833,
+      "min": -1.204392044051349,
+      "q01": -0.8484485039005001,
+      "q05": -0.522454970850302,
+      "median": 1.158733677137574e-15,
+      "q95": 0.46720119852905156,
+      "q99": 0.8136252477867768,
+      "max": 2.5880650684647617,
+      "rms": 0.3015263610982161
+    },
+    "dipolo_signado": {
+      "n": 328833,
+      "min": -1.4940058016038937,
+      "q01": -0.9208561120122465,
+      "q05": -0.5828038960745122,
+      "median": 0.0,
+      "q95": 0.5355681408469848,
+      "q99": 0.883441482356284,
+      "max": 2.7912327234117678,
+      "rms": 0.33089480454575004
+    }
+  },
+  "guardrails": [
+    "Correlations are descriptive, not causal estimates.",
+    "Across-structure correlations are confounded by structural prior.",
+    "Within-structure correlations are more relevant to the compute-budget mechanism.",
+    "Occupancy force error is evaluation-only and was never a training objective.",
+    "No new training or tuning was performed."
+  ]
+}

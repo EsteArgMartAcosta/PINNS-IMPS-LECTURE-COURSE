@@ -364,6 +364,11 @@
   function adjacentConcept(step){const idx=conceptData.nodes.findIndex(n=>n.id===state.activeConcept);const n=conceptData.nodes[(idx+step+conceptData.nodes.length)%conceptData.nodes.length];openConcept(n.id,false)}
   qs('#concept-prev').onclick=()=>adjacentConcept(-1);qs('#concept-next').onclick=()=>adjacentConcept(1);
   buildNodes();
+  // Premium-map default: open a representative W4 concept so the mathematical
+  // drawer is immediately populated. This is still a live selection and can
+  // be changed by clicking any node.
+  state.activeTab='intuition';
+  openConcept('neuralode', false);
 
   const story=['pde','pinn','causality','spectralbias','fourier','sampling','abc','neuralode','integrator','spectralbasis','neusa','transfer'];
   qs('#storyline-track').innerHTML=story.map((id,i)=>`<span class="story-step"><button data-id="${id}">${lang(nodeById.get(id).label)}</button>${i<story.length-1?'<span class="story-arrow">→</span>':''}</span>`).join('');
@@ -527,6 +532,8 @@
     rail.innerHTML=weeks.map(w=>`<button class="timeline-dot ${w.id===activeWeek?'active':''}" data-week-id="${w.id}"><span>W0${w.id}</span><strong>${w.title}</strong></button>`).join('');
     qsa('.timeline-dot',rail).forEach(b=>b.onclick=()=>{activeWeek=Number(b.dataset.weekId);renderTimeline();});
     const w=weeks.find(x=>x.id===activeWeek)||weeks[0]; if(!w)return;
+    const timelineSection=qs('.timeline-section');
+    if(timelineSection) timelineSection.dataset.activeWeek=String(w.id);
     stage.innerHTML=`
       <div class="week-stage-head">
         <div><span class="timeline-kicker">${w.kicker}</span><h3>${w.title}</h3></div>
@@ -539,8 +546,90 @@
         <div class="week-block experiments"><span>WHAT I TESTED</span><ul>${w.experiments.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       </div>
       <div class="week-conclusion"><span>WHAT CHANGED</span><strong>${w.conclusion}</strong><p>${w.bridge}</p></div>`;
+    typesetMath(stage);
   }
   renderTimeline();
+
+  // -------------------------------------------------------------
+  // Timeline atmosphere — dynamic research currents
+  // -------------------------------------------------------------
+  const timelineSection=qs('.timeline-section');
+  if(timelineSection){
+    const timelineCanvas=document.createElement('canvas');
+    timelineCanvas.id='timeline-bg-canvas';
+    timelineCanvas.setAttribute('aria-hidden','true');
+    timelineSection.prepend(timelineCanvas);
+    const tctx=timelineCanvas.getContext('2d');
+    let tw=1,th=1,tdpr=1,tparticles=[];
+    const timelineColors={
+      1:[92,164,255],
+      2:[166,126,255],
+      3:[255,190,86],
+      4:[84,236,190]
+    };
+    function resizeTimelineCanvas(){
+      const r=timelineSection.getBoundingClientRect();
+      tw=Math.max(1,r.width); th=Math.max(1,r.height); tdpr=Math.min(devicePixelRatio||1,2);
+      timelineCanvas.width=Math.floor(tw*tdpr); timelineCanvas.height=Math.floor(th*tdpr);
+      timelineCanvas.style.width=tw+'px'; timelineCanvas.style.height=th+'px';
+      tctx.setTransform(tdpr,0,0,tdpr,0,0);
+      const n=clamp(Math.floor(tw*th/26000),42,110);
+      tparticles=Array.from({length:n},(_,i)=>({
+        x:Math.random()*tw,y:Math.random()*th,
+        vx:.05+Math.random()*.13,vy:(Math.random()-.5)*.035,
+        r:.5+Math.random()*1.25,a:.08+Math.random()*.18,phase:Math.random()*Math.PI*2
+      }));
+    }
+    function timelineWave(yBase,amp,freq,phase,color,alpha,width){
+      tctx.beginPath();
+      for(let x=-30;x<=tw+30;x+=8){
+        const y=yBase+Math.sin(x*freq+phase)*amp+Math.sin(x*freq*.37-phase*.7)*amp*.36;
+        if(x===-30)tctx.moveTo(x,y);else tctx.lineTo(x,y);
+      }
+      tctx.strokeStyle=`rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
+      tctx.lineWidth=width;tctx.stroke();
+    }
+    function drawTimelineAtmosphere(ms){
+      const t=ms*.001;
+      tctx.clearRect(0,0,tw,th);
+      const c=timelineColors[activeWeek]||timelineColors[1];
+      const fade=tctx.createLinearGradient(0,0,tw,th);
+      fade.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},.055)`);
+      fade.addColorStop(.42,'rgba(5,15,29,.01)');
+      fade.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},.035)`);
+      tctx.fillStyle=fade;tctx.fillRect(0,0,tw,th);
+
+      // travelling spectral / temporal traces
+      timelineWave(th*.17,24,0.0075,t*.34,c,.16,1.15);
+      timelineWave(th*.43,34,0.0052,-t*.25,[112,198,255],.10,1);
+      timelineWave(th*.78,26,0.0081,t*.19,[96,238,201],.095,1);
+      for(let j=0;j<3;j++){
+        timelineWave(th*(.24+j*.22),10+j*7,0.014-j*.002,t*(.42-j*.08)+j,c,.045,.6);
+      }
+
+      // moving particles that read like information flow
+      for(const p of tparticles){
+        p.x+=p.vx; p.y+=p.vy+Math.sin(t*.7+p.phase)*.015;
+        if(p.x>tw+20){p.x=-20;p.y=Math.random()*th;}
+        if(p.y<-20)p.y=th+20;if(p.y>th+20)p.y=-20;
+        const pulse=.55+.45*Math.sin(t*1.4+p.phase);
+        tctx.beginPath();tctx.arc(p.x,p.y,p.r*(.8+.35*pulse),0,Math.PI*2);
+        tctx.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${p.a*(.65+.35*pulse)})`;tctx.fill();
+      }
+
+      // faint vertical time markers
+      tctx.save();tctx.setLineDash([2,14]);tctx.lineWidth=.55;
+      for(let x=tw*.18;x<tw;x+=tw*.16){
+        tctx.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},.035)`;
+        tctx.beginPath();tctx.moveTo(x,th*.08);tctx.lineTo(x,th*.92);tctx.stroke();
+      }
+      tctx.restore();
+      requestAnimationFrame(drawTimelineAtmosphere);
+    }
+    const trObserver=new ResizeObserver(resizeTimelineCanvas);trObserver.observe(timelineSection);
+    resizeTimelineCanvas();
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(drawTimelineAtmosphere);
+  }
 
   // -------------------------------------------------------------
   // Experiment atlas
@@ -548,6 +637,77 @@
   const atlasData=window.SCIML_EXPERIMENTS||[];
   let atlasPhase='all', atlasSearch='';
   const toneToColor={blue:'var(--blue)',purple:'var(--purple)',amber:'var(--amber)',green:'var(--green)',cyan:'var(--cyan)',red:'var(--red)'};
+
+  // -----------------------------------------------------------------
+  // Correct LaTeX strings for experiment dossiers.
+  // Some formulas in the generated evidence dataset were serialized as
+  // normal JS strings, which corrupted commands such as \text, \theta,
+  // \argmin, \approx, and \tilde. We repair them here with raw strings
+  // so MathJax receives valid LaTeX.
+  // -----------------------------------------------------------------
+  const atlasMathById = {
+    'pinn-reproduction': String.raw`\[
+\mathcal L(\theta)=\lambda_r\,\mathcal L_r+\lambda_{IC}\,\mathcal L_{IC}+\lambda_{BC}\,\mathcal L_{BC}+\lambda_d\,\mathcal L_{\mathrm{data}}.
+\]`,
+    'pinn-seeds-frequency': String.raw`\[
+A_f = \log\!\left(\frac{E_{\mathrm{matched}}(f)}{E_{\mathrm{FF}}(f)}\right),\qquad I=A_{20}-A_{10}.
+\]`,
+    'pinn-sigma-sweep': String.raw`\[
+\gamma_{\sigma}(z)=\big[\sin(2\pi zB),\cos(2\pi zB)\big],\qquad B_{ij}\sim\mathcal N(0,\sigma^2).
+\]`,
+    'pinn-more-points': String.raw`\[
+N_{\mathrm{int}}: 8000\;\longrightarrow\;16000.
+\]`,
+    'pinn-dispersion': String.raw`\[
+|b_t| = c\sqrt{b_x^2+b_y^2}\qquad\text{(wave-cone alignment)}.
+\]`,
+    'pinn-causal': String.raw`\[
+\mathcal L = \sum_i w_i(\theta)\,\mathcal L_i,\qquad w_i\downarrow\ \text{when preceding residuals remain large}.
+\]`,
+    'pinn-adaptive': String.raw`\[
+\text{adaptive score} \propto |R_{\theta}(x,t)|.
+\]`,
+    'neusa-official': String.raw`\[
+\text{relative error}=\frac{\|u_{\theta}-u_{\mathrm{ref}}\|_2}{\|u_{\mathrm{ref}}\|_2}.
+\]`,
+    'neusa-linearized': String.raw`\[
+a^{\prime}=b,\qquad b^{\prime}=-(\Omega^2+10I)a+0.1\,N(a).
+\]`,
+    'neusa-local-cubic': String.raw`\[
+r_{\mathrm{cubic}}(u)=\frac{10}{6}u^3\,(1+z)^{-1}q\!\left(\frac{z}{1+z}\right),\qquad z=(u/4)^2.
+\]`,
+    'neusa-odd': String.raw`\[
+r_{\mathrm{odd}}(u)=5\,[q(u/4)-q(-u/4)],\qquad r_{\mathrm{cubic}}(u)\sim c\,u^3\;\text{near }0.
+\]`,
+    'neusa-compute': String.raw`\[
+\text{equal-budget comparison: }500\text{ updates total},\qquad \text{frontier comparison: }500\to1500.
+\]`,
+    'neusa-operator-recovery': String.raw`\[
+F_{\theta}(u)\approx-\hat\mu\sin u,\qquad \hat\mu=\arg\min_{\mu}\,\mathbb E_{u\sim\rho}\big[F_{\theta}(u)+\mu\sin u\big]^2.
+\]`,
+    'neusa-robustness': String.raw`\[
+\text{tail diagnostics: }\{\text{mean},\;q_{90},\;\max\}.
+\]`,
+    'parametric-neusa': String.raw`\[
+\mu \in \{5,7.5,10,12.5,15\}\;\text{train},\qquad \mu_{\mathrm{test}}\in\{6.25,8.75,11.25,13.75,3.75,16.25\}.
+\]`,
+    'inverse-calibration': String.raw`\[
+\hat\mu = \arg\min_{\mu}\,\sum_{(x_i,t_i)}\big(u_{\theta}(x_i,t_i;\mu)-y_i\big)^2.
+\]`,
+    'sensor-design': String.raw`\[
+\mathcal I(\mu) = J(\mu)^\top \Sigma^{-1}J(\mu),\qquad \text{maximize a scalar summary of }\mathcal I.
+\]`,
+    'uq-failure': String.raw`\[
+\mu\mid y \approx \mathcal N\!\left(\hat\mu,\,\mathcal I(\hat\mu)^{-1}\right).
+\]`,
+    'discrepancy-repair': String.raw`\[
+\tilde\mu = a_{\pm}\,\hat\mu + b_{\pm},\qquad \text{with side-specific discrepancy calibration}.
+\]`,
+    'pseudo-true': String.raw`\[
+\mu^{\dagger}_{\mathrm{obs}}\neq \mu^{\dagger}_{\mathrm{forecast}}\neq \mu_{\mathrm{true}}\quad\text{is possible under model misspecification}.
+\]`
+  };
+
   function filteredAtlas(){
     return atlasData.filter(e=>{
       const phaseOK=atlasPhase==='all'||e.phase===atlasPhase;
@@ -555,6 +715,27 @@
       return phaseOK&&(!atlasSearch||q.includes(atlasSearch));
     });
   }
+  function renderMiniFigure(fig){
+    if(!fig) return '';
+    if(fig.kind==='image'){
+      return `<figure class="mini-figure mini-figure-image"><div class="mini-figure-head"><strong>${fig.title||''}</strong></div><button class="evidence-image-button" data-image-src="${fig.src}" data-image-title="${escapeHtml(fig.title||'Evidence figure')}"><img src="${fig.src}" alt="${escapeHtml(fig.title||'Evidence figure')}" loading="lazy"/></button>${fig.caption?`<figcaption>${fig.caption}</figcaption>`:''}</figure>`;
+    }
+    if(fig.kind==='table'){
+      return `<div class="mini-figure mini-figure-table"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="evidence-table-wrap"><table class="evidence-table"><thead><tr>${(fig.columns||[]).map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${(fig.rows||[]).map(row=>`<tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+    }
+    if(fig.kind==='stats'){
+      return `<div class="mini-figure mini-figure-stats"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="mini-stats-grid">${(fig.items||[]).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><strong>${v}</strong></div>`).join('')}</div></div>`;
+    }
+    if(fig.kind==='bars'){
+      const vals=(fig.values||[]).map(Number); const max=Math.max(...vals,1);
+      return `<div class="mini-figure"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="mini-bars">${(fig.labels||[]).map((label,i)=>{const v=vals[i]??0; const h=12+Math.round((v/max)*84); const color=(fig.colors&&fig.colors[i])||'#7ca7ff'; return `<div class="mini-bar-item"><div class="mini-bar-wrap"><div class="mini-bar" style="height:${h}px;background:${color}"></div></div><strong>${v}${fig.suffix||''}</strong><span>${label}</span></div>`}).join('')}</div></div>`;
+    }
+    if(fig.kind==='note'){
+      return `<div class="mini-figure mini-figure-note"><div class="mini-figure-head"><strong>${fig.title||''}</strong></div><p>${fig.text||''}</p></div>`;
+    }
+    return '';
+  }
+
   function renderAtlas(){
     const grid=qs('#experiment-atlas-grid'); if(!grid)return;
     const rows=filteredAtlas(); qs('#atlas-count').textContent=rows.length;
@@ -563,11 +744,17 @@
         <div class="atlas-card-top"><span>${e.phase}</span><small>${e.category}</small></div>
         <h3>${e.title}</h3>
         <p class="atlas-question">${e.question}</p>
+        <div class="atlas-meta-row">
+          <div><span>runtime</span><strong>${e.runtime||'controlled run'}</strong></div>
+          <div><span>evaluation</span><strong>${e.evaluation||'comparative audit'}</strong></div>
+        </div>
+        ${e.figures?.[0] ? `<div class="atlas-figure-preview">${renderMiniFigure(e.figures[0])}</div>` : ''}
         <div class="atlas-answer"><span>ANSWER</span><strong>${e.answer}</strong></div>
         <div class="atlas-metrics">${e.metrics.slice(0,3).map(m=>`<span>${m}</span>`).join('')}</div>
-        <button class="atlas-open" data-atlas-id="${e.id}">Open evidence ↗</button>
+        <button class="atlas-open" data-atlas-id="${e.id}">Open full evidence ↗</button>
       </article>`).join('');
     qsa('.atlas-open',grid).forEach(b=>b.onclick=()=>openExperiment(b.dataset.atlasId));
+    qsa('.evidence-image-button',grid).forEach(b=>b.addEventListener('click',()=>openImageLightbox(b.dataset.imageSrc,b.dataset.imageTitle)));
   }
   qsa('[data-atlas]').forEach(b=>b.onclick=()=>{
     qsa('[data-atlas]').forEach(x=>x.classList.remove('active')); b.classList.add('active');
@@ -594,6 +781,17 @@
   qs('#atlas-search')?.addEventListener('input',e=>{atlasSearch=e.target.value.toLowerCase().trim();renderAtlas();});
   renderAtlas();
 
+  // Robust delegated handler: atlas cards are re-rendered by filters/search,
+  // so opening evidence should not depend on per-render listeners. Capture
+  // the click at the grid level and open the matching global drawer.
+  qs('#experiment-atlas-grid')?.addEventListener('click', e => {
+    const btn = e.target.closest?.('.atlas-open');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openExperiment(btn.dataset.atlasId);
+  });
+
   function openExperiment(id){
     const e=atlasData.find(x=>x.id===id); if(!e)return;
     qs('#drawer-kicker').textContent=`${e.phase.toUpperCase()} · ${e.category.toUpperCase()}`;
@@ -602,12 +800,38 @@
     qs('#drawer-control').textContent=e.design;
     qs('#drawer-change').textContent=e.result;
     qs('#drawer-readout').textContent=e.answer;
+    qs('#drawer-runtime').textContent=e.runtime || 'Controlled run';
+    qs('#drawer-evaluation').textContent=e.evaluation || 'Comparative evaluation';
+    qs('#drawer-achieved').innerHTML=(e.achieved||[]).map(x=>`<li>${x}</li>`).join('');
     qs('#drawer-rulesout').textContent=e.rulesOut;
+    qs('#drawer-math').innerHTML=atlasMathById[e.id] || e.math || ''; // repaired valid LaTeX
+    qs('#drawer-figures').innerHTML=(e.figures||[]).map(renderMiniFigure).join('');
+    qs('#drawer-sources').innerHTML=(e.sources||[]).length ? (e.sources||[]).map(s=>`<a class="evidence-source-link" href="${s.href}" target="_blank" rel="noopener">${s.label} ↗</a>`).join('') : '<span class="source-empty">No separate raw summary was included for this benchmark.</span>';
     qs('#drawer-note').textContent=`LIMITATION · ${e.limitation}`;
     qs('#drawer-metrics').innerHTML=e.metrics.map(m=>`<span>${m}</span>`).join('');
     qs('#protocol-drawer').classList.add('open');
     qs('#protocol-drawer').setAttribute('aria-hidden','false');
+    qsa('.evidence-image-button',qs('#protocol-drawer')).forEach(b=>b.addEventListener('click',()=>openImageLightbox(b.dataset.imageSrc,b.dataset.imageTitle)));
+    if(window.MathJax?.typesetPromise){
+      window.MathJax.typesetPromise([qs('#protocol-drawer')]).catch(()=>{});
+    }
   }
+
+  function openImageLightbox(src,title='Evidence figure'){
+    const box=qs('#evidence-lightbox'); if(!box)return;
+    qs('#evidence-lightbox-img').src=src;
+    qs('#evidence-lightbox-img').alt=title;
+    qs('#evidence-lightbox-title').textContent=title;
+    box.classList.add('open');
+    box.setAttribute('aria-hidden','false');
+  }
+  function closeImageLightbox(){
+    const box=qs('#evidence-lightbox'); if(!box)return;
+    box.classList.remove('open');
+    box.setAttribute('aria-hidden','true');
+  }
+  qs('#evidence-lightbox-close')?.addEventListener('click',closeImageLightbox);
+  qs('#evidence-lightbox-scrim')?.addEventListener('click',closeImageLightbox);
 
   // -------------------------------------------------------------
   // Evidence-backed synthesis
@@ -839,4 +1063,146 @@
   resize();
   draw(0);
   if(!reduceMotion) requestAnimationFrame(frame);
+})();
+
+
+// -------------------------------------------------------------
+// Experiment atlas ambient background — interactive only as decoration
+// -------------------------------------------------------------
+(() => {
+  const canvas = document.querySelector('#atlas-bg-canvas');
+  const section = document.querySelector('#experiments');
+  if(!canvas || !section) return;
+  const g = canvas.getContext('2d');
+  let W=0,H=0,dpr=1,raf=0;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mouse = {x:-9999,y:-9999,inside:false};
+  let t0 = 0;
+
+  const nodes = Array.from({length:26}, (_,i)=>( {
+    x:.08 + Math.random()*.84,
+    y:.08 + Math.random()*.84,
+    vx:(Math.random()-.5)*.00012,
+    vy:(Math.random()-.5)*.00012,
+    r:1.8 + Math.random()*3.6,
+    tone:i%3===0 ? [88,217,255] : i%3===1 ? [124,167,255] : [76,225,182],
+    phase:Math.random()*Math.PI*2
+  }));
+  const pulses = Array.from({length:18}, (_,i)=>({
+    edge:[Math.floor(Math.random()*nodes.length), Math.floor(Math.random()*nodes.length)],
+    u:Math.random(),
+    speed:.00008 + Math.random()*.00009,
+    phase:i*.41
+  })).filter(p=>p.edge[0]!==p.edge[1]);
+
+  function resize(){
+    const r = section.getBoundingClientRect();
+    W = Math.max(1, Math.floor(r.width));
+    H = Math.max(1, Math.floor(section.offsetHeight));
+    dpr = Math.min(devicePixelRatio || 1, 1.8);
+    canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    g.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function sectionCoords(evt){
+    const r = section.getBoundingClientRect();
+    mouse.x = evt.clientX - r.left; mouse.y = evt.clientY - r.top;
+  }
+
+  section.addEventListener('pointermove', evt => { mouse.inside = true; sectionCoords(evt); });
+  section.addEventListener('pointerenter', evt => { mouse.inside = true; sectionCoords(evt); });
+  section.addEventListener('pointerleave', () => { mouse.inside = false; mouse.x = -9999; mouse.y = -9999; });
+  addEventListener('resize', resize);
+
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  function draw(ms){
+    if(!t0) t0 = ms;
+    const time = ms - t0;
+    g.clearRect(0,0,W,H);
+
+    const sky = g.createLinearGradient(0,0,W,H);
+    sky.addColorStop(0,'rgba(11,24,40,0.14)');
+    sky.addColorStop(.55,'rgba(11,24,40,0.03)');
+    sky.addColorStop(1,'rgba(11,24,40,0.16)');
+    g.fillStyle = sky; g.fillRect(0,0,W,H);
+
+    // slow flowing wave ribbons
+    for(let band=0; band<4; band++){
+      g.beginPath();
+      for(let i=0;i<=140;i++){
+        const u = i/140;
+        const x = u*W;
+        const y = H*(.18 + band*.18) + Math.sin(u*7.8 + time*.00028 + band)*18 + Math.cos(u*4.4 - time*.00019)*8;
+        i ? g.lineTo(x,y) : g.moveTo(x,y);
+      }
+      g.strokeStyle = band%2===0 ? 'rgba(88,217,255,.08)' : 'rgba(124,167,255,.06)';
+      g.lineWidth = band===2 ? 1.2 : .9;
+      g.stroke();
+    }
+
+    // update and render premium node field
+    const pts = nodes.map(n => {
+      n.x += n.vx * time * .015; n.y += n.vy * time * .015;
+      if(n.x < .04 || n.x > .96) n.vx *= -1;
+      if(n.y < .05 || n.y > .95) n.vy *= -1;
+      const x = n.x * W, y = n.y * H;
+      return {n,x,y};
+    });
+
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const a = pts[i], b = pts[j];
+        const d = Math.hypot(a.x-b.x, a.y-b.y);
+        if(d < 180){
+          const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+          const mouseBoost = mouse.inside ? Math.max(0, 1 - Math.hypot(mx-mouse.x, my-mouse.y)/220) : 0;
+          const alpha = (.11*(1-d/180)) + mouseBoost*.12;
+          g.strokeStyle = `rgba(122,176,225,${alpha})`;
+          g.lineWidth = mouseBoost > 0 ? 1.15 : .75;
+          g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+        }
+      }
+    }
+
+    pulses.forEach((p,k)=>{
+      const a = pts[p.edge[0]], b = pts[p.edge[1]]; if(!a||!b) return;
+      p.u = (p.u + p.speed * (reduceMotion ? .12 : 1.0) * time * .06) % 1;
+      const x = lerp(a.x,b.x,p.u), y = lerp(a.y,b.y,p.u);
+      const alpha = .22 + .28 * (.5 + .5*Math.sin(time*.004 + p.phase));
+      const grad = g.createRadialGradient(x,y,0,x,y,12);
+      grad.addColorStop(0, `rgba(190,236,255,${alpha})`);
+      grad.addColorStop(.35, `rgba(88,217,255,${alpha*.45})`);
+      grad.addColorStop(1, 'rgba(88,217,255,0)');
+      g.fillStyle = grad; g.beginPath(); g.arc(x,y,12,0,Math.PI*2); g.fill();
+    });
+
+    pts.forEach(({n,x,y},i)=>{
+      const [r,gg,b] = n.tone;
+      const hover = mouse.inside ? Math.max(0, 1 - Math.hypot(x-mouse.x,y-mouse.y)/180) : 0;
+      const pulse = .5 + .5*Math.sin(time*.0022 + n.phase);
+      const rad = n.r + pulse*1.4 + hover*1.2;
+      const glow = g.createRadialGradient(x,y,0,x,y,rad*5);
+      glow.addColorStop(0, `rgba(${r},${gg},${b},${.18 + hover*.10})`);
+      glow.addColorStop(.22, `rgba(${r},${gg},${b},${.08 + hover*.05})`);
+      glow.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+      g.fillStyle = glow; g.beginPath(); g.arc(x,y,rad*5,0,Math.PI*2); g.fill();
+      g.fillStyle = `rgba(${r},${gg},${b},${.68 + hover*.18})`;
+      g.beginPath(); g.arc(x,y,rad,0,Math.PI*2); g.fill();
+      g.fillStyle = 'rgba(245,250,255,.95)'; g.beginPath(); g.arc(x,y,Math.max(0.8,rad*.22),0,Math.PI*2); g.fill();
+    });
+
+    // subtle focus halo under the cards area
+    const halo = g.createRadialGradient(W*.5,H*.58,0,W*.5,H*.58,Math.max(W,H)*.42);
+    halo.addColorStop(0,'rgba(90,160,255,.06)');
+    halo.addColorStop(.45,'rgba(88,217,255,.03)');
+    halo.addColorStop(1,'rgba(0,0,0,0)');
+    g.fillStyle = halo; g.fillRect(0,0,W,H);
+
+    raf = requestAnimationFrame(draw);
+  }
+
+  resize();
+  if(!reduceMotion) raf = requestAnimationFrame(draw); else draw(0);
 })();

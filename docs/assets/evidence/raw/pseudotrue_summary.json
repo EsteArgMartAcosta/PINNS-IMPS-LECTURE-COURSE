@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "study": "Physical parameter vs predictive pseudo-true parameter",
+  "study_type": "mechanistic diagnostic follow-up",
+  "aggregate": {
+    "near_extrapolation": {
+      "n": 18,
+      "mean_abs_forecast_pseudotrue_gap": 0.05833333333333327,
+      "mean_abs_clean_obs_star_gap": 0.13611111111111093,
+      "mean_forecast_compensation_gain_percent_points": 1.0036902823265357,
+      "corrected_parameter_better_count": 9,
+      "corrected_forecast_worse_count": 11,
+      "mechanism_flag_count": 2,
+      "forecast_pseudotrue_boundary_count": 0
+    },
+    "far_extrapolation": {
+      "n": 18,
+      "mean_abs_forecast_pseudotrue_gap": 0.09444444444444396,
+      "mean_abs_clean_obs_star_gap": 0.23611111111111122,
+      "mean_forecast_compensation_gain_percent_points": 1.9189866841600198,
+      "corrected_parameter_better_count": 18,
+      "corrected_forecast_worse_count": 0,
+      "mechanism_flag_count": 0,
+      "forecast_pseudotrue_boundary_count": 0
+    }
+  },
+  "by_mu": {
+    "4.25": {
+      "n": 9,
+      "mean_mu_forecast_pseudotrue": 4.25,
+      "mean_mu_clean_obs_star": 4.2444444444444445,
+      "mean_abs_forecast_pseudotrue_gap": 0.0,
+      "mean_forecast_error_at_true_mu_percent": 0.43491809246298124,
+      "mean_forecast_error_at_pseudotrue_percent": 0.43491809246298124,
+      "mechanism_flag_count": 0
+    },
+    "15.75": {
+      "n": 9,
+      "mean_mu_forecast_pseudotrue": 15.633333333333335,
+      "mean_mu_clean_obs_star": 15.483333333333333,
+      "mean_abs_forecast_pseudotrue_gap": 0.11666666666666654,
+      "mean_forecast_error_at_true_mu_percent": 3.6258100770277224,
+      "mean_forecast_error_at_pseudotrue_percent": 1.618429512374651,
+      "mechanism_flag_count": 2
+    },
+    "3.25": {
+      "n": 9,
+      "mean_mu_forecast_pseudotrue": 3.2444444444444445,
+      "mean_mu_clean_obs_star": 3.211111111111111,
+      "mean_abs_forecast_pseudotrue_gap": 0.005555555555555536,
+      "mean_forecast_error_at_true_mu_percent": 0.49017742343517245,
+      "mean_forecast_error_at_pseudotrue_percent": 0.4595479770299107,
+      "mechanism_flag_count": 0
+    },
+    "16.75": {
+      "n": 9,
+      "mean_mu_forecast_pseudotrue": 16.566666666666666,
+      "mean_mu_clean_obs_star": 16.316666666666666,
+      "mean_abs_forecast_pseudotrue_gap": 0.18333333333333238,
+      "mean_forecast_error_at_true_mu_percent": 6.403415534201404,
+      "mean_forecast_error_at_pseudotrue_percent": 2.5960716122866256,
+      "mechanism_flag_count": 0
+    }
+  },
+  "mechanism": {
+    "all_tasks": 36,
+    "parameter_better_but_forecast_worse_count": 2,
+    "among_tradeoff_naive_closer_to_pseudotrue_count": 2,
+    "full_mechanism_flag_count": 2,
+    "interpretation_rule": "mechanism_flag = corrected parameter is closer to mu_true, corrected forecast is worse, and naive estimate is closer to the forecast pseudo-true parameter."
+  },
+  "guardrails": [
+    "Phase 8 was motivated by the Phase-7 result and is therefore diagnostic, not a new blinded confirmatory test.",
+    "Only the Fisher12 layout is studied.",
+    "All NeuSA weights remain frozen.",
+    "The forecast pseudo-true parameter is defined by a finite dense sweep of the frozen surrogate.",
+    "Clean early-observation mismatch is separated from future field error on (3,5]."
+  ]
+}

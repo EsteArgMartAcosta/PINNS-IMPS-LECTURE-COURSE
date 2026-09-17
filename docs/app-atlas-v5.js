@@ -364,6 +364,11 @@
   function adjacentConcept(step){const idx=conceptData.nodes.findIndex(n=>n.id===state.activeConcept);const n=conceptData.nodes[(idx+step+conceptData.nodes.length)%conceptData.nodes.length];openConcept(n.id,false)}
   qs('#concept-prev').onclick=()=>adjacentConcept(-1);qs('#concept-next').onclick=()=>adjacentConcept(1);
   buildNodes();
+  // Premium-map default: open a representative W4 concept so the mathematical
+  // drawer is immediately populated. This is still a live selection and can
+  // be changed by clicking any node.
+  state.activeTab='intuition';
+  openConcept('neuralode', false);
 
   const story=['pde','pinn','causality','spectralbias','fourier','sampling','abc','neuralode','integrator','spectralbasis','neusa','transfer'];
   qs('#storyline-track').innerHTML=story.map((id,i)=>`<span class="story-step"><button data-id="${id}">${lang(nodeById.get(id).label)}</button>${i<story.length-1?'<span class="story-arrow">→</span>':''}</span>`).join('');
@@ -527,6 +532,8 @@
     rail.innerHTML=weeks.map(w=>`<button class="timeline-dot ${w.id===activeWeek?'active':''}" data-week-id="${w.id}"><span>W0${w.id}</span><strong>${w.title}</strong></button>`).join('');
     qsa('.timeline-dot',rail).forEach(b=>b.onclick=()=>{activeWeek=Number(b.dataset.weekId);renderTimeline();});
     const w=weeks.find(x=>x.id===activeWeek)||weeks[0]; if(!w)return;
+    const timelineSection=qs('.timeline-section');
+    if(timelineSection) timelineSection.dataset.activeWeek=String(w.id);
     stage.innerHTML=`
       <div class="week-stage-head">
         <div><span class="timeline-kicker">${w.kicker}</span><h3>${w.title}</h3></div>
@@ -539,8 +546,90 @@
         <div class="week-block experiments"><span>WHAT I TESTED</span><ul>${w.experiments.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       </div>
       <div class="week-conclusion"><span>WHAT CHANGED</span><strong>${w.conclusion}</strong><p>${w.bridge}</p></div>`;
+    typesetMath(stage);
   }
   renderTimeline();
+
+  // -------------------------------------------------------------
+  // Timeline atmosphere — dynamic research currents
+  // -------------------------------------------------------------
+  const timelineSection=qs('.timeline-section');
+  if(timelineSection){
+    const timelineCanvas=document.createElement('canvas');
+    timelineCanvas.id='timeline-bg-canvas';
+    timelineCanvas.setAttribute('aria-hidden','true');
+    timelineSection.prepend(timelineCanvas);
+    const tctx=timelineCanvas.getContext('2d');
+    let tw=1,th=1,tdpr=1,tparticles=[];
+    const timelineColors={
+      1:[92,164,255],
+      2:[166,126,255],
+      3:[255,190,86],
+      4:[84,236,190]
+    };
+    function resizeTimelineCanvas(){
+      const r=timelineSection.getBoundingClientRect();
+      tw=Math.max(1,r.width); th=Math.max(1,r.height); tdpr=Math.min(devicePixelRatio||1,2);
+      timelineCanvas.width=Math.floor(tw*tdpr); timelineCanvas.height=Math.floor(th*tdpr);
+      timelineCanvas.style.width=tw+'px'; timelineCanvas.style.height=th+'px';
+      tctx.setTransform(tdpr,0,0,tdpr,0,0);
+      const n=clamp(Math.floor(tw*th/26000),42,110);
+      tparticles=Array.from({length:n},(_,i)=>({
+        x:Math.random()*tw,y:Math.random()*th,
+        vx:.05+Math.random()*.13,vy:(Math.random()-.5)*.035,
+        r:.5+Math.random()*1.25,a:.08+Math.random()*.18,phase:Math.random()*Math.PI*2
+      }));
+    }
+    function timelineWave(yBase,amp,freq,phase,color,alpha,width){
+      tctx.beginPath();
+      for(let x=-30;x<=tw+30;x+=8){
+        const y=yBase+Math.sin(x*freq+phase)*amp+Math.sin(x*freq*.37-phase*.7)*amp*.36;
+        if(x===-30)tctx.moveTo(x,y);else tctx.lineTo(x,y);
+      }
+      tctx.strokeStyle=`rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
+      tctx.lineWidth=width;tctx.stroke();
+    }
+    function drawTimelineAtmosphere(ms){
+      const t=ms*.001;
+      tctx.clearRect(0,0,tw,th);
+      const c=timelineColors[activeWeek]||timelineColors[1];
+      const fade=tctx.createLinearGradient(0,0,tw,th);
+      fade.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},.055)`);
+      fade.addColorStop(.42,'rgba(5,15,29,.01)');
+      fade.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},.035)`);
+      tctx.fillStyle=fade;tctx.fillRect(0,0,tw,th);
+
+      // travelling spectral / temporal traces
+      timelineWave(th*.17,24,0.0075,t*.34,c,.16,1.15);
+      timelineWave(th*.43,34,0.0052,-t*.25,[112,198,255],.10,1);
+      timelineWave(th*.78,26,0.0081,t*.19,[96,238,201],.095,1);
+      for(let j=0;j<3;j++){
+        timelineWave(th*(.24+j*.22),10+j*7,0.014-j*.002,t*(.42-j*.08)+j,c,.045,.6);
+      }
+
+      // moving particles that read like information flow
+      for(const p of tparticles){
+        p.x+=p.vx; p.y+=p.vy+Math.sin(t*.7+p.phase)*.015;
+        if(p.x>tw+20){p.x=-20;p.y=Math.random()*th;}
+        if(p.y<-20)p.y=th+20;if(p.y>th+20)p.y=-20;
+        const pulse=.55+.45*Math.sin(t*1.4+p.phase);
+        tctx.beginPath();tctx.arc(p.x,p.y,p.r*(.8+.35*pulse),0,Math.PI*2);
+        tctx.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${p.a*(.65+.35*pulse)})`;tctx.fill();
+      }
+
+      // faint vertical time markers
+      tctx.save();tctx.setLineDash([2,14]);tctx.lineWidth=.55;
+      for(let x=tw*.18;x<tw;x+=tw*.16){
+        tctx.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},.035)`;
+        tctx.beginPath();tctx.moveTo(x,th*.08);tctx.lineTo(x,th*.92);tctx.stroke();
+      }
+      tctx.restore();
+      requestAnimationFrame(drawTimelineAtmosphere);
+    }
+    const trObserver=new ResizeObserver(resizeTimelineCanvas);trObserver.observe(timelineSection);
+    resizeTimelineCanvas();
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(drawTimelineAtmosphere);
+  }
 
   // -------------------------------------------------------------
   // Experiment atlas
@@ -555,6 +644,21 @@
       return phaseOK&&(!atlasSearch||q.includes(atlasSearch));
     });
   }
+  function renderMiniFigure(fig){
+    if(!fig) return '';
+    if(fig.kind==='stats'){
+      return `<div class="mini-figure mini-figure-stats"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="mini-stats-grid">${(fig.items||[]).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><strong>${v}</strong></div>`).join('')}</div></div>`;
+    }
+    if(fig.kind==='bars'){
+      const vals=(fig.values||[]).map(Number); const max=Math.max(...vals,1);
+      return `<div class="mini-figure"><div class="mini-figure-head"><strong>${fig.title||''}</strong>${fig.subtitle?`<small>${fig.subtitle}</small>`:''}</div><div class="mini-bars">${(fig.labels||[]).map((label,i)=>{const v=vals[i]??0; const h=12+Math.round((v/max)*84); const color=(fig.colors&&fig.colors[i])||'#7ca7ff'; return `<div class="mini-bar-item"><div class="mini-bar-wrap"><div class="mini-bar" style="height:${h}px;background:${color}"></div></div><strong>${v}${fig.suffix||''}</strong><span>${label}</span></div>`}).join('')}</div></div>`;
+    }
+    if(fig.kind==='note'){
+      return `<div class="mini-figure mini-figure-note"><div class="mini-figure-head"><strong>${fig.title||''}</strong></div><p>${fig.text||''}</p></div>`;
+    }
+    return '';
+  }
+
   function renderAtlas(){
     const grid=qs('#experiment-atlas-grid'); if(!grid)return;
     const rows=filteredAtlas(); qs('#atlas-count').textContent=rows.length;
@@ -563,9 +667,14 @@
         <div class="atlas-card-top"><span>${e.phase}</span><small>${e.category}</small></div>
         <h3>${e.title}</h3>
         <p class="atlas-question">${e.question}</p>
+        <div class="atlas-meta-row">
+          <div><span>runtime</span><strong>${e.runtime||'controlled run'}</strong></div>
+          <div><span>evaluation</span><strong>${e.evaluation||'comparative audit'}</strong></div>
+        </div>
+        ${e.figures?.[0] ? `<div class="atlas-figure-preview">${renderMiniFigure(e.figures[0])}</div>` : ''}
         <div class="atlas-answer"><span>ANSWER</span><strong>${e.answer}</strong></div>
         <div class="atlas-metrics">${e.metrics.slice(0,3).map(m=>`<span>${m}</span>`).join('')}</div>
-        <button class="atlas-open" data-atlas-id="${e.id}">Open evidence ↗</button>
+        <button class="atlas-open" data-atlas-id="${e.id}">Open full evidence ↗</button>
       </article>`).join('');
     qsa('.atlas-open',grid).forEach(b=>b.onclick=()=>openExperiment(b.dataset.atlasId));
   }
@@ -602,11 +711,19 @@
     qs('#drawer-control').textContent=e.design;
     qs('#drawer-change').textContent=e.result;
     qs('#drawer-readout').textContent=e.answer;
+    qs('#drawer-runtime').textContent=e.runtime || 'Controlled run';
+    qs('#drawer-evaluation').textContent=e.evaluation || 'Comparative evaluation';
+    qs('#drawer-achieved').innerHTML=(e.achieved||[]).map(x=>`<li>${x}</li>`).join('');
     qs('#drawer-rulesout').textContent=e.rulesOut;
+    qs('#drawer-math').innerHTML=e.math || '';
+    qs('#drawer-figures').innerHTML=(e.figures||[]).map(renderMiniFigure).join('');
     qs('#drawer-note').textContent=`LIMITATION · ${e.limitation}`;
     qs('#drawer-metrics').innerHTML=e.metrics.map(m=>`<span>${m}</span>`).join('');
     qs('#protocol-drawer').classList.add('open');
     qs('#protocol-drawer').setAttribute('aria-hidden','false');
+    if(window.MathJax?.typesetPromise){
+      window.MathJax.typesetPromise([qs('#protocol-drawer')]).catch(()=>{});
+    }
   }
 
   // -------------------------------------------------------------

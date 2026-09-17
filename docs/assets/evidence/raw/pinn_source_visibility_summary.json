@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "development_only": true,
+  "comparison": {
+    "baseline_8000": {
+      "relative_l2": 1.0042327642440796,
+      "relative_l1": 1.3488138914108276,
+      "prediction_l2_over_reference_l2": 0.37018802762031555,
+      "cosine_similarity": 0.17558160424232483,
+      "prediction_maxabs_over_reference_maxabs": 1.1547726392745972,
+      "error_early_third": 0.9786726832389832,
+      "error_middle_third": 1.002261757850647,
+      "error_late_third": 1.5900719165802002
+    },
+    "uniform_16000": {
+      "updates": 30000,
+      "relative_l2": 1.0555170774459839,
+      "prediction_l2_over_reference_l2": 0.5008005499839783,
+      "cosine_similarity": 0.13681603968143463,
+      "prediction_maxabs_over_reference_maxabs": 1.1126387119293213,
+      "error_early_third": 0.9666860699653625,
+      "error_middle_third": 1.0134016275405884,
+      "error_late_third": 2.9289135932922363
+    }
+  },
+  "source_core_visibility": {
+    "baseline_8000": {
+      "definition": "radius <= kernel_width and |t-1/f0| <= 1/(2 f0)",
+      "uniform_core_fraction": 9.817477042468105e-05,
+      "expected_core_points_per_update": 0.7853981633974484,
+      "poisson_approx_probability_at_least_one_core_point": 0.5440618722340038
+    },
+    "current_run": {
+      "definition": "radius <= kernel_width and |t-1/f0| <= 1/(2 f0)",
+      "uniform_core_fraction": 9.817477042468105e-05,
+      "expected_core_points_per_update": 1.5707963267948968,
+      "poisson_approx_probability_at_least_one_core_point": 0.7921204236492381
+    }
+  },
+  "relative_l2_reduction_fraction": -0.05106815374671405,
+  "cosine_change": -0.0387655645608902,
+  "decision": "no_simple_visibility_rescue",
+  "next_rule": "Doubling global uniform samples is insufficient. Next test dispersion-aligned Fourier features, since sigma scaling changed bandwidth but preserved the random orientation relative to the wave cone."
+}
