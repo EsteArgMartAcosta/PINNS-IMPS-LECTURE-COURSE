@@ -921,15 +921,34 @@ F_{\theta}(u)\approx-\hat\mu\sin u,\qquad \hat\mu=\arg\min_{\mu}\,\mathbb E_{u\s
             ['Discrepancy repair','Explicit model discrepancy raised far extrapolation Fisher coverage to 77.8%, with 83.3% at seed ensemble level.']
           ],
           footer:'High local information can coexist with an invalid surrogate. Precision is not the same thing as validity.'
+        },
+        {
+          id:'active-discovery', index:'05', kicker:'EXPERIMENTAL DESIGN IS PART OF THE MODEL',
+          label:'Parameter information is not law information.',
+          title:'The next observation should distinguish physical explanations, not only reduce a parameter variance.',
+          copy:'The missing-physics experiments showed a new separation. Fisher information selected an experiment that was useful for the nominal parameter, while ensemble and discovery-aware criteria moved to a high-excitation regime that made competing force laws distinguishable. With one additional oracle trajectory, the active selection sharply improved symbolic law recovery even though its training loss was not the smallest.',
+          math:String.raw`\[
+          \text{parameter information}
+          \;\neq\;
+          \text{law information}.
+          \]`,
+          conclusion:'For scientific discovery, experimental design is not a downstream convenience. It determines which physical statements are identifiable from the data.',
+          evidenceTitle:'The one-step active experiment made the distinction quantitative.',
+          evidence:[
+            ['Different experiment','Fisher-μ selected peak amplitude 0.70, while ensemble and discovery-aware selected peak 2.20.'],
+            ['Law recovery','Discovery-aware reduced symbolic coefficient error from 1.227 to 0.0705 relative to the weak baseline.'],
+            ['Frozen random panel','The selected experiment ranked first against eight frozen random candidates on symbolic recovery, common operator recovery, and challenging transfer.']
+          ],
+          footer:'The DEV evidence supports an active-discovery mechanism. The blinded 12-world confirmatory campaign is frozen but not completed for this presentation.'
         }
       ]
     },
     future: {
-      quote:'The next frontier is not simply a larger PINN. It is a scientific model that can state what it learned, where that knowledge remains valid, and what evidence it needs next.',
+      quote:'The next frontier is a model that can discover missing physics, recognize when its own state representation is insufficient, and request the evidence needed to resolve that ambiguity.',
       directAnswer: {
         label:'DIRECT ANSWER · QUESTION B',
-        title:'The question I would pursue next is whether a scientific surrogate can detect when it should no longer be trusted and decide what observation would make it trustworthy again.',
-        copy:'That would connect structural learning, inverse identification, model validity, and experimental design in one loop. The goal would be to learn only the missing physics, distinguish physical parameters from surrogate compensation, detect model invalidity before confidence becomes misleading, and choose the next measurement that reduces the right uncertainty.'
+        title:'The next question is whether this active discovery loop survives when the hidden physics is genuinely unknown and when the assumed state variables are themselves incomplete.',
+        copy:'The DEV mechanism is now fixed. The next scientific test is blinded: multiple pre-committed hidden worlds, no architecture retuning, and explicit out-of-class cases where a local residual R(u,u_t) should fail unless the state is augmented. That separates a successful demonstration from a method that generalizes.'
       },
       items: [
         {
@@ -997,26 +1016,23 @@ F_{\theta}(u)\approx-\hat\mu\sin u,\qquad \hat\mu=\arg\min_{\mu}\,\mathbb E_{u\s
           footer:'The object to estimate is not only uncertainty. It is the boundary of model validity.'
         },
         {
-          id:'next-observation', index:'04', kicker:'CLOSE THE LOOP WITH EXPERIMENTAL DESIGN',
-          label:'Let the model identify the next informative observation.',
-          title:'Prediction should become an active scientific loop.',
-          copy:'The natural next step after calibration and validity detection is adaptive measurement design. I would ask the model which observation would most reduce uncertainty about the physical law while remaining inside a region where the surrogate is itself credible.',
+          id:'blind-confirmation', index:'04', kicker:'BLIND GENERALIZATION AND STATE SUFFICIENCY',
+          label:'Test the method where the hidden physics is not known in advance.',
+          title:'The next result must survive a blinded world, not another tuned DEV example.',
+          copy:'I would now freeze the learner, acquisition rule, candidate bank, optimization budget and evaluation metrics, then test them across pre-committed hidden physical worlds. Some worlds should be deliberately outside the assumed local state class so that failure itself becomes diagnostic rather than something to hide.',
           math:String.raw`\[
-          a^*
-          =
-          \arg\max_{a\in\mathcal D_{\mathrm{trust}}}
-          I\!\left(
-          \text{physical law};y_a\mid\text{current surrogate}
-          \right).
+          R^\star=R(u,u_t)
+          \quad\text{versus}\quad
+          R^\star=R(u,u_t,u_{xx}).
           \]`,
-          conclusion:'The model should not only predict. It should tell us what to measure next and why.',
-          evidenceTitle:'We already saw the first piece of this loop.',
+          conclusion:'A scientific discovery system should recover a law when it can, and produce evidence of state insufficiency when it cannot.',
+          evidenceTitle:'The confirmatory design is already frozen.',
           evidence:[
-            ['Fisher sensor design','Sensor placement improved parameter identification without increasing the observation count.'],
-            ['Validity failure','The same local information criterion could still be overconfident outside model support.'],
-            ['Next step','Measurement design should account jointly for information gain and model validity.']
+            ['12 hidden worlds','Conservative, dissipative, mixed, and deliberately out-of-class physics were committed before the DEV outcomes.'],
+            ['Blinded selection','World-specific random, Fisher, ensemble, and discovery-aware experiments were selected without revealing the hidden coefficients.'],
+            ['Next test','The remaining question is whether the fixed DEV mechanism survives those worlds without retuning.']
           ],
-          footer:'That would turn the surrogate from a passive predictor into a participant in experimental design.'
+          footer:'That is the distinction between a compelling development result and confirmatory evidence of generalization.'
         }
       ]
     }

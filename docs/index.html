@@ -7,6 +7,7 @@
   <title>SciML Atlas — From PINNs to Trustworthy Learned Physics</title>
   <meta name="description" content="Interactive SciML research atlas: PINNs, wave failure modes, NeuSA, structural priors, inverse problems, experimental design, and uncertainty under model misspecification." />
   <link rel="stylesheet" href="./styles-final-belief.css?v=20260918-2035" />
+  <link rel="stylesheet" href="./styles-active-discovery.css?v=20260925-001" />
   <script>
     window.MathJax = {
       tex: {
@@ -34,6 +35,7 @@
       <a href="#pinn" data-nav="pinn">What is a PINN?</a>
       <a href="#journey" data-nav="journey">Weeks 1–4</a>
       <a href="#experiments" data-nav="experiments">Experiments</a>
+      <a href="#discovery" data-nav="discovery">Scientific discovery</a>
       <a href="#synthesis" data-nav="synthesis">What I believe now</a>
     </nav>
     <div class="top-actions">
@@ -393,17 +395,84 @@
       <div class="experiment-atlas-grid reveal delay-1" id="experiment-atlas-grid"></div>
     </section>
 
+
+    <!-- =======================================================
+         ACTIVE SCIENTIFIC DISCOVERY — NEW RESULTS
+         ======================================================= -->
+    <section class="section discovery-section" id="discovery" data-stage="5" data-stage-title="Active scientific discovery">
+      <canvas id="discovery-bg-canvas" aria-hidden="true"></canvas>
+      <div class="discovery-halo discovery-halo-a" aria-hidden="true"></div>
+      <div class="discovery-halo discovery-halo-b" aria-hidden="true"></div>
+      <div class="discovery-grid" aria-hidden="true"></div>
+
+      <div class="section-head reveal discovery-head">
+        <div>
+          <div class="eyebrow">05 · FROM LEARNING PHYSICS TO CHOOSING EVIDENCE</div>
+          <h2>Active scientific discovery</h2>
+        </div>
+        <p>The question changed again: if the governing equation is incomplete, can NeuSA expose the missing law and identify the experiment that makes competing physical explanations distinguishable?</p>
+      </div>
+
+      <div class="discovery-status reveal">
+        <div class="discovery-status-main"><span class="status-pulse"></span><strong>DEV EVIDENCE COMPLETE</strong><small>Mechanism, architecture, compute and one-step active-design controls finished.</small></div>
+        <div class="discovery-status-boundary"><strong>CONFIRMATORY CAMPAIGN FROZEN</strong><small>12 blinded worlds pre-committed; outcomes not completed for this presentation.</small></div>
+      </div>
+
+      <div class="discovery-thesis reveal delay-1">
+        <span>THE NEW QUESTION</span>
+        <h3>Can a scientific model learn what physics is missing, and then choose the experiment that makes that missing law identifiable?</h3>
+        <div class="discovery-chain" aria-label="Research chain">
+          <span>wrong equation</span><i>→</i><span>parameter compensation</span><i>→</i><span>law ambiguity</span><i>→</i><span>informative excitation</span><i>→</i><strong>active discovery</strong>
+        </div>
+      </div>
+
+      <div class="discovery-workbench reveal delay-1">
+        <aside class="discovery-rail" id="discovery-rail" aria-label="Active discovery stages"></aside>
+
+        <article class="discovery-main glass-card">
+          <div class="discovery-main-head">
+            <div><span id="discovery-kicker"></span><h3 id="discovery-title"></h3></div>
+            <span class="discovery-step-index" id="discovery-step-index">01</span>
+          </div>
+          <p class="discovery-copy" id="discovery-copy"></p>
+          <div class="discovery-math" id="discovery-math"></div>
+          <div class="discovery-metrics" id="discovery-metrics"></div>
+          <div class="discovery-viz" id="discovery-viz" aria-live="polite"></div>
+        </article>
+
+        <aside class="discovery-insight glass-card">
+          <span class="discovery-insight-kicker">WHAT THIS CHANGED</span>
+          <h3 id="discovery-insight-title"></h3>
+          <p id="discovery-insight-copy"></p>
+          <div class="discovery-claim" id="discovery-claim"></div>
+          <div class="discovery-boundary" id="discovery-boundary"></div>
+        </aside>
+      </div>
+
+      <div class="discovery-outcome-strip reveal delay-2">
+        <div class="outcome-label"><span>ONE-STEP DEV OUTCOME</span><strong>The selected experiment converted predictive success into identifiable physics.</strong></div>
+        <div class="outcome-stat"><span>SYMBOLIC ERROR</span><strong>1.227 → 0.0705</strong><small>17.4× lower vs weak baseline</small></div>
+        <div class="outcome-stat"><span>COMMON OPERATOR</span><strong>1.533 → 0.220</strong><small>7.0× lower vs weak baseline</small></div>
+        <div class="outcome-stat"><span>RANDOM BENCHMARK</span><strong>1st / 9</strong><small>all 3 pre-selected metrics</small></div>
+      </div>
+
+      <div class="discovery-footer-note reveal">
+        <span>CLAIM BOUNDARY</span>
+        <p>These are development results. The blinded multi-world confirmatory protocol, candidate selections and SHA-256 commitments are frozen, but the full confirmatory outcome campaign is not complete for this presentation.</p>
+      </div>
+    </section>
+
     <!-- =======================================================
          SYNTHESIS / PROFESSOR QUESTIONS
          ======================================================= -->
-    <section class="section synthesis-section synthesis-final" id="synthesis" data-stage="5" data-stage-title="What I believe now">
+    <section class="section synthesis-section synthesis-final" id="synthesis" data-stage="6" data-stage-title="What I believe now">
       <canvas id="synthesis-bg-canvas" aria-hidden="true"></canvas>
       <div class="synthesis-orbit synthesis-orbit-a" aria-hidden="true"></div>
       <div class="synthesis-orbit synthesis-orbit-b" aria-hidden="true"></div>
 
       <div class="section-head reveal synthesis-head">
         <div>
-          <div class="eyebrow">05 · THE TWO QUESTIONS THAT MATTER</div>
+          <div class="eyebrow">06 · THE TWO QUESTIONS THAT MATTER</div>
           <h2>What I believe now</h2>
         </div>
         <p>These answers are grounded in the experiment chain above. Each claim can be traced back to a protocol, an observed failure mode, and a result that changed the next question.</p>
@@ -514,7 +583,7 @@
 
   <div class="presenter-dock" id="presenter-dock" aria-hidden="true">
     <button id="present-prev">←</button>
-    <div><span id="present-index">1 / 6</span><strong id="present-title">Opening</strong></div>
+    <div><span id="present-index">1 / 7</span><strong id="present-title">Opening</strong></div>
     <button id="present-next">→</button>
     <button id="present-exit">Exit</button>
   </div>
@@ -524,5 +593,6 @@
     <script src="./data/weeks-timeline-v4.js"></script>
   <script src="./data/experiments-v6.js?v=20260917-2205"></script>
   <script src="./app-final-belief.js?v=20260918-2035"></script>
+  <script src="./app-active-discovery.js?v=20260925-001"></script>
 </body>
 </html>
